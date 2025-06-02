@@ -8,6 +8,7 @@ import {
   RegistrationScreen,
   PasswordRecoveryScreen,
 } from "@/pages/auth";
+import { AccountsListScreen, AccountDetailScreen } from "@/pages/accounts";
 import ImprovedDashboard from "@/pages/ImprovedDashboard";
 import { ROUTES } from "@/constants/routes";
 
@@ -42,6 +43,24 @@ function App() {
               element={
                 // <ProtectedRoute>
                 <ImprovedDashboard />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Account routes */}
+            <Route
+              path={ROUTES.ACCOUNTS.LIST}
+              element={
+                // <ProtectedRoute>
+                <AccountsListScreen />
+                // </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.ACCOUNTS.DETAIL}
+              element={
+                // <ProtectedRoute>
+                <AccountDetailScreen />
                 // </ProtectedRoute>
               }
             />

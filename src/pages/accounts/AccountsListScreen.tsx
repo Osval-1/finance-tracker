@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import {
   Plus,
   RefreshCw,
-  MoreVertical,
-  Eye,
-  Edit,
-  Unlink,
-  Trash2,
   CreditCard,
   PiggyBank,
   TrendingUp,
   Landmark,
   BadgeDollarSign,
+  MoreVertical,
+  Edit,
+  Trash2,
+  Unlink,
+  Eye,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import {
   useAccounts,
@@ -50,11 +50,9 @@ import {
 } from "@/hooks/accounts/useAccounts";
 import type { Account } from "@/types/accounts";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 // Account creation components (would be separate files in practice)
-import { CreateAccountForm } from "./components/CreateAccountForm";
-import { PlaidLinkComponent } from "./components/PlaidLinkComponent";
+import { CreateAccountForm, PlaidLinkComponent } from "@/components/features";
 
 const AccountsListScreen = () => {
   const [createAccountOpen, setCreateAccountOpen] = useState(false);
