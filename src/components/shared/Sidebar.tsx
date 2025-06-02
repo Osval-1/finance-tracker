@@ -11,7 +11,6 @@ import {
   Settings,
   CreditCard,
   Bell,
-  Users,
   HelpCircle,
   ChevronLeft,
   ChevronRight,
