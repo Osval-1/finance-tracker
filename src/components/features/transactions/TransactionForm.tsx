@@ -13,33 +13,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { Switch } from "@/components/ui/switch";
 
-import type { Transaction } from "@/types/transactions";
+import type {
+  Transaction,
+  CreateTransactionPayload,
+} from "@/types/transactions";
 import type { Account } from "@/types/accounts";
 import { cn } from "@/lib/utils";
 
 interface Category {
   id: string;
   name: string;
-}
-
-interface CreateTransactionPayload {
-  date: string;
-  amount: number;
-  merchant: string;
-  description?: string;
-  accountId: string;
-  categoryId?: string;
-  tags?: string[];
-  notes?: string;
-  isCleared?: boolean;
 }
 
 interface TransactionFormProps {

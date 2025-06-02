@@ -5,3 +5,4 @@ export { TransactionBulkActions } from "./TransactionBulkActions";
 export { TransactionSummaryCards } from "./TransactionSummaryCards";
 export { TransactionImportForm } from "./TransactionImportForm";
 export { TransactionEntryModal } from "./TransactionEntryModal";
+export { BulkCategorizationDrawer } from "./BulkCategorizationDrawer";

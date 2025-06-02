@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Plus, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   useBulkTransactionOperations,
 } from "@/hooks/transactions/useTransactions";
 import { useAccounts } from "@/hooks/accounts/useAccounts";
-import type { TransactionFilters } from "@/types/transactions";
+import type { TransactionFilters, Transaction } from "@/types/transactions";
 
 // Import transaction feature components
 import {
@@ -21,12 +21,14 @@ import {
   TransactionSummaryCards,
   TransactionBulkActions,
   TransactionTable,
+  TransactionEntryModal,
+  BulkCategorizationDrawer,
 } from "@/components/features/transactions";
 
 const TransactionsListScreen = () => {
   const [filters, setFilters] = useState<TransactionFilters>({
     page: 1,
-    limit: 25,
+    limit: 20,
     sortBy: "date",
     sortOrder: "desc",
   });
@@ -34,6 +36,11 @@ const TransactionsListScreen = () => {
     []
   );
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
+  const [isBulkCategorizationOpen, setIsBulkCategorizationOpen] =
+    useState(false);
 
   const { data: transactionsData, isLoading, error } = useTransactions(filters);
   const { data: accountsData } = useAccounts();
@@ -110,6 +117,22 @@ const TransactionsListScreen = () => {
     exportTransactionsMutation.mutate(filters);
   };
 
+  const handleEditTransaction = (transactionId: string) => {
+    const transaction = transactions.find((t) => t.id === transactionId);
+    if (transaction) {
+      setEditingTransaction(transaction);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsAddModalOpen(false);
+    setEditingTransaction(null);
+  };
+
+  const handleBulkCategorize = () => {
+    setIsBulkCategorizationOpen(true);
+  };
+
   const pagination = transactionsData?.pagination;
 
   if (isLoading) {
@@ -160,7 +183,14 @@ const TransactionsListScreen = () => {
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button>
+          <Button
+            variant="outline"
+            onClick={handleBulkCategorize}
+            disabled={transactions.filter((t) => !t.categoryId).length === 0}
+          >
+            Bulk Categorize
+          </Button>
+          <Button onClick={() => setIsAddModalOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Transaction
           </Button>
@@ -202,7 +232,7 @@ const TransactionsListScreen = () => {
         pagination={pagination}
         onSelectTransaction={handleSelectTransaction}
         onSelectAll={handleSelectAll}
-        onEditTransaction={(id) => console.log("Edit transaction", id)}
+        onEditTransaction={handleEditTransaction}
         onCategorizeTransaction={(id) =>
           console.log("Categorize transaction", id)
         }
@@ -233,12 +263,41 @@ const TransactionsListScreen = () => {
           <p className="text-gray-600 mb-4">
             Start tracking your finances by adding your first transaction.
           </p>
-          <Button>
+          <Button onClick={() => setIsAddModalOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Transaction
           </Button>
         </div>
       )}
+
+      {/* Floating Action Button for mobile */}
+      <div className="fixed bottom-6 right-6 md:hidden">
+        <Button
+          size="lg"
+          onClick={() => setIsAddModalOpen(true)}
+          className="rounded-full w-14 h-14 shadow-lg"
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+      </div>
+
+      {/* Transaction Entry Modal */}
+      <TransactionEntryModal
+        isOpen={isAddModalOpen || !!editingTransaction}
+        onClose={handleCloseModal}
+        transaction={editingTransaction || undefined}
+        accounts={accounts}
+        categories={categories}
+        isEditing={!!editingTransaction}
+      />
+
+      {/* Bulk Categorization Drawer */}
+      <BulkCategorizationDrawer
+        isOpen={isBulkCategorizationOpen}
+        onClose={() => setIsBulkCategorizationOpen(false)}
+        transactions={transactions}
+        categories={categories}
+      />
     </div>
   );
 };
