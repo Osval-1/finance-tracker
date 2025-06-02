@@ -29,8 +29,11 @@ export const useAuth = () => {
       toast.success("Welcome back!");
       navigate("/dashboard");
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Login failed");
+    onError: (error: unknown) => {
+      const errorResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      toast.error(errorResponse?.response?.data?.message || "Login failed");
     },
     onSettled: () => {
       setLoading(false);
@@ -49,8 +52,13 @@ export const useAuth = () => {
       toast.success("Account created successfully!");
       navigate("/dashboard");
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Registration failed");
+    onError: (error: unknown) => {
+      const errorResponse = error as {
+        response?: { data?: { message?: string } };
+      };
+      toast.error(
+        errorResponse?.response?.data?.message || "Registration failed"
+      );
     },
     onSettled: () => {
       setLoading(false);
@@ -75,7 +83,7 @@ export const useAuth = () => {
   });
 
   // Get current user query
-  const { data: currentUser, isLoading: isLoadingUser } = useQuery({
+  const { isLoading: isLoadingUser } = useQuery({
     queryKey: ["auth", "currentUser"],
     queryFn: authApi.getCurrentUser,
     enabled: isAuthenticated && !!user,
