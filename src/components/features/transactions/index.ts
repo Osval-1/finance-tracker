@@ -1,6 +1,7 @@
-export { default as TransactionFilters } from "./TransactionFilters";
-export { default as TransactionSummaryCards } from "./TransactionSummaryCards";
-export { default as TransactionBulkActions } from "./TransactionBulkActions";
-export { default as TransactionTable } from "./TransactionTable";
-export { default as TransactionForm } from "./TransactionForm";
-export { default as TransactionImportForm } from "./TransactionImportForm";
+export { TransactionForm } from "./TransactionForm";
+export { TransactionTable } from "./TransactionTable";
+export { TransactionFilters } from "./TransactionFilters";
+export { TransactionBulkActions } from "./TransactionBulkActions";
+export { TransactionSummaryCards } from "./TransactionSummaryCards";
+export { TransactionImportForm } from "./TransactionImportForm";
+export { TransactionEntryModal } from "./TransactionEntryModal";
