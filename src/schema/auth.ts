@@ -9,7 +9,7 @@ export const loginSchema = yup.object({
     .string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters"),
-  rememberMe: yup.boolean().optional(),
+  rememberMe: yup.boolean().optional().default(false),
 });
 
 export const registerSchema = yup.object({

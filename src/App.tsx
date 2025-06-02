@@ -9,7 +9,7 @@ import {
   RegistrationScreen,
   PasswordRecoveryScreen,
 } from "@/pages/auth";
-import Dashboard from "@/pages/Dashboard";
+import ImprovedDashboard from "@/pages/ImprovedDashboard";
 import { ROUTES } from "@/constants/routes";
 
 import "./App.css";
@@ -41,9 +41,9 @@ function App() {
             <Route
               path={ROUTES.DASHBOARD}
               element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
+                // <ProtectedRoute>
+                <ImprovedDashboard />
+                // </ProtectedRoute>
               }
             />
 
