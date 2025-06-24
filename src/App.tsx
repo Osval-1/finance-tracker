@@ -9,6 +9,7 @@ import {
   PasswordRecoveryScreen,
 } from "@/pages/auth";
 import { AccountsListScreen, AccountDetailScreen } from "@/pages/accounts";
+import { BudgetsList } from "@/pages/budgets";
 import ImprovedDashboard from "@/pages/ImprovedDashboard";
 import { ROUTES } from "@/constants/routes";
 
@@ -61,6 +62,16 @@ function App() {
               element={
                 // <ProtectedRoute>
                 <AccountDetailScreen />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Budget routes */}
+            <Route
+              path={ROUTES.BUDGETS.LIST}
+              element={
+                // <ProtectedRoute>
+                <BudgetsList />
                 // </ProtectedRoute>
               }
             />
