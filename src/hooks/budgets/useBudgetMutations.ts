@@ -5,6 +5,7 @@ import {
   deleteBudget,
   archiveBudget,
   refreshBudgets,
+  exportBudgets,
 } from "@/api/budgets";
 import {
   BUDGETS_QUERY_KEYS,
@@ -13,7 +14,7 @@ import {
 } from "@/constants/query_keys";
 import { toast } from "sonner";
 import type { AxiosError } from "axios";
-import type { CreateBudgetPayload, BudgetResponse } from "@/types/budgets";
+import type { CreateBudgetPayload, BudgetFilters } from "@/types/budgets";
 
 /**
  * Hook to create a new budget
@@ -23,7 +24,7 @@ export const useCreateBudget = () => {
 
   return useMutation({
     mutationFn: (payload: CreateBudgetPayload) => createBudget(payload),
-    onSuccess: (data: BudgetResponse) => {
+    onSuccess: () => {
       // Invalidate budgets queries
       queryClient.invalidateQueries({ queryKey: BUDGETS_QUERY_KEYS.all });
       queryClient.invalidateQueries({ queryKey: REPORTS_QUERY_KEYS.all });
@@ -53,7 +54,7 @@ export const useUpdateBudget = () => {
       budgetId: string;
       payload: Partial<CreateBudgetPayload>;
     }) => updateBudget(budgetId, payload),
-    onSuccess: (data: BudgetResponse, variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate budgets queries
       queryClient.invalidateQueries({ queryKey: BUDGETS_QUERY_KEYS.all });
       queryClient.invalidateQueries({
@@ -107,7 +108,7 @@ export const useArchiveBudget = () => {
 
   return useMutation({
     mutationFn: (budgetId: string) => archiveBudget(budgetId),
-    onSuccess: (data: BudgetResponse, budgetId) => {
+    onSuccess: (_, budgetId) => {
       // Invalidate budgets queries
       queryClient.invalidateQueries({ queryKey: BUDGETS_QUERY_KEYS.all });
       queryClient.invalidateQueries({
@@ -145,6 +146,41 @@ export const useRefreshBudgets = () => {
       const errorMessage =
         (error.response?.data as { message?: string })?.message ||
         "Failed to refresh budgets";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**
+ * Hook to export budgets data
+ */
+export const useExportBudgets = () => {
+  return useMutation({
+    mutationFn: ({
+      format,
+      filters,
+    }: {
+      format: "csv" | "pdf";
+      filters?: BudgetFilters;
+    }) => exportBudgets(format, filters),
+    onSuccess: (blob, variables) => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `budgets-export.${variables.format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(
+        `Budget data exported as ${variables.format.toUpperCase()}`
+      );
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage =
+        (error.response?.data as { message?: string })?.message ||
+        "Failed to export budget data";
       toast.error(errorMessage);
     },
   });

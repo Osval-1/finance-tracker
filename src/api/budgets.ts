@@ -129,3 +129,45 @@ export const getBudgetProgress = async (
   });
   return response.data;
 };
+
+/**
+ * Export budgets data
+ */
+export const exportBudgets = async (
+  format: "csv" | "pdf",
+  filters?: BudgetFilters
+): Promise<Blob> => {
+  const response = await api.get(`/budgets/export/${format}`, {
+    params: filters,
+    responseType: "blob",
+  });
+  return response.data;
+};
+
+/**
+ * Get budget analytics data
+ */
+export const getBudgetAnalytics = async (
+  period: string = "monthly"
+): Promise<{
+  averageSpending: number;
+  budgetCompliance: number;
+  topCategories: Array<{
+    categoryId: string;
+    categoryName: string;
+    totalSpent: number;
+    totalBudgeted: number;
+    variance: number;
+  }>;
+  monthlyTrends: Array<{
+    month: string;
+    totalBudgeted: number;
+    totalSpent: number;
+    variance: number;
+  }>;
+}> => {
+  const response = await api.get("/budgets/analytics", {
+    params: { period },
+  });
+  return response.data;
+};

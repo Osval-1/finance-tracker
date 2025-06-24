@@ -28,6 +28,7 @@ export const ROUTES = {
   // Budget routes
   BUDGETS: {
     LIST: "/budgets",
+    DETAIL: "/budgets/:id",
   },
 
   // Goal routes

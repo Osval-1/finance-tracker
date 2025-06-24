@@ -4,6 +4,8 @@ import {
   getBudgetById,
   getBudgetSummary,
   getBudgetTrends,
+  getBudgetProgress,
+  getBudgetAnalytics,
 } from "@/api/budgets";
 import { BUDGETS_QUERY_KEYS } from "@/constants/query_keys";
 import type {
@@ -60,6 +62,38 @@ export const useBudgetTrends = (
   return useQuery<BudgetTrend[]>({
     queryKey: [...BUDGETS_QUERY_KEYS.all, "trends", { categoryId, period }],
     queryFn: () => getBudgetTrends(categoryId, period),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+};
+
+/**
+ * Hook to fetch budget progress for a specific period
+ */
+export const useBudgetProgress = (
+  budgetId: string,
+  startDate: string,
+  endDate: string,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: [
+      ...BUDGETS_QUERY_KEYS.all,
+      "progress",
+      { budgetId, startDate, endDate },
+    ],
+    queryFn: () => getBudgetProgress(budgetId, startDate, endDate),
+    enabled: enabled && !!budgetId && !!startDate && !!endDate,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+/**
+ * Hook to fetch budget analytics
+ */
+export const useBudgetAnalytics = (period: string = "monthly") => {
+  return useQuery({
+    queryKey: [...BUDGETS_QUERY_KEYS.all, "analytics", { period }],
+    queryFn: () => getBudgetAnalytics(period),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 };
