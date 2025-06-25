@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import mockTransactionsAPI from "@/mocks/servers/transactionsMockServer";
 import type {
   Transaction,
   TransactionFilters,
@@ -11,12 +12,20 @@ import type {
   FileImportResponse,
 } from "@/types/transactions";
 
+// Check if we should use mock data
+const USE_MOCK =
+  import.meta.env.DEV || import.meta.env.VITE_USE_MOCK === "true";
+
 /**
  * Get transactions with optional filters
  */
 export const getTransactions = async (
   filters?: TransactionFilters
 ): Promise<TransactionsResponse> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.getTransactions(filters);
+  }
+
   const response = await api.get<TransactionsResponse>("/transactions", {
     params: filters,
   });
@@ -29,6 +38,10 @@ export const getTransactions = async (
 export const getTransactionById = async (
   transactionId: string
 ): Promise<Transaction> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.getTransactionById(transactionId);
+  }
+
   const response = await api.get<{
     success: boolean;
     transaction: Transaction;
@@ -42,6 +55,10 @@ export const getTransactionById = async (
 export const createTransaction = async (
   payload: CreateTransactionPayload
 ): Promise<{ message: string; transaction: Transaction }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.createTransaction(payload);
+  }
+
   const response = await api.post<{
     message: string;
     transaction: Transaction;
@@ -56,6 +73,10 @@ export const updateTransaction = async (
   transactionId: string,
   payload: UpdateTransactionPayload
 ): Promise<{ message: string; transaction: Transaction }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.updateTransaction(transactionId, payload);
+  }
+
   const response = await api.put<{ message: string; transaction: Transaction }>(
     `/transactions/${transactionId}`,
     payload
@@ -69,6 +90,10 @@ export const updateTransaction = async (
 export const deleteTransaction = async (
   transactionId: string
 ): Promise<{ message: string }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.deleteTransaction(transactionId);
+  }
+
   const response = await api.delete<{ message: string }>(
     `/transactions/${transactionId}`
   );
@@ -85,6 +110,15 @@ export const bulkTransactionOperations = async (
   processedCount: number;
   transactions: Transaction[];
 }> => {
+  if (USE_MOCK) {
+    const result = await mockTransactionsAPI.bulkOperations(operation);
+    return {
+      message: result.message,
+      processedCount: result.affectedCount,
+      transactions: [], // Mock doesn't return updated transactions in bulk ops
+    };
+  }
+
   const response = await api.post<{
     message: string;
     processedCount: number;
@@ -99,6 +133,12 @@ export const bulkTransactionOperations = async (
 export const reconcileTransaction = async (
   transactionId: string
 ): Promise<{ message: string; transaction: Transaction }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.updateTransaction(transactionId, {
+      isReconciled: true,
+    });
+  }
+
   const response = await api.patch<{
     message: string;
     transaction: Transaction;
@@ -112,6 +152,12 @@ export const reconcileTransaction = async (
 export const clearTransaction = async (
   transactionId: string
 ): Promise<{ message: string; transaction: Transaction }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.updateTransaction(transactionId, {
+      isCleared: true,
+    });
+  }
+
   const response = await api.patch<{
     message: string;
     transaction: Transaction;
@@ -126,6 +172,10 @@ export const categorizeTransaction = async (
   transactionId: string,
   categoryId: string
 ): Promise<{ message: string; transaction: Transaction }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.updateTransaction(transactionId, { categoryId });
+  }
+
   const response = await api.patch<{
     message: string;
     transaction: Transaction;
@@ -140,6 +190,10 @@ export const tagTransaction = async (
   transactionId: string,
   tags: string[]
 ): Promise<{ message: string; transaction: Transaction }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.updateTransaction(transactionId, { tags });
+  }
+
   const response = await api.patch<{
     message: string;
     transaction: Transaction;
@@ -154,6 +208,14 @@ export const getTransactionCategories = async (): Promise<{
   success: boolean;
   categories: TransactionCategory[];
 }> => {
+  if (USE_MOCK) {
+    const result = await mockTransactionsAPI.getCategories();
+    return {
+      success: true,
+      categories: result.categories,
+    };
+  }
+
   const response = await api.get<{
     success: boolean;
     categories: TransactionCategory[];
@@ -171,6 +233,10 @@ export const createTransactionCategory = async (payload: {
   type: "income" | "expense" | "transfer";
   parentId?: string;
 }): Promise<{ message: string; category: TransactionCategory }> => {
+  if (USE_MOCK) {
+    return mockTransactionsAPI.createCategory(payload);
+  }
+
   const response = await api.post<{
     message: string;
     category: TransactionCategory;

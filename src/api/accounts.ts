@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import mockAccountsAPI from "@/mocks/servers/accountsMockServer";
 import type {
   Account,
   AccountsResponse,
@@ -9,10 +10,18 @@ import type {
   PlaidLinkResponse,
 } from "@/types/accounts";
 
+// Check if we should use mock data
+const USE_MOCK =
+  import.meta.env.DEV || import.meta.env.VITE_USE_MOCK === "true";
+
 /**
  * Get all accounts for the authenticated user
  */
 export const getAccounts = async (): Promise<AccountsResponse> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.getAccounts();
+  }
+
   const response = await api.get<AccountsResponse>("/accounts");
   return response.data;
 };
@@ -21,6 +30,10 @@ export const getAccounts = async (): Promise<AccountsResponse> => {
  * Get a specific account by ID
  */
 export const getAccountById = async (accountId: string): Promise<Account> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.getAccountById(accountId);
+  }
+
   const response = await api.get<{ success: boolean; account: Account }>(
     `/accounts/${accountId}`
   );
@@ -33,6 +46,10 @@ export const getAccountById = async (accountId: string): Promise<Account> => {
 export const createAccount = async (
   payload: CreateAccountPayload
 ): Promise<{ message: string; account: Account }> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.createAccount(payload);
+  }
+
   const response = await api.post<{ message: string; account: Account }>(
     "/accounts",
     payload
@@ -47,6 +64,10 @@ export const updateAccount = async (
   accountId: string,
   payload: UpdateAccountPayload
 ): Promise<{ message: string; account: Account }> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.updateAccount(accountId, payload);
+  }
+
   const response = await api.put<{ message: string; account: Account }>(
     `/accounts/${accountId}`,
     payload
@@ -60,6 +81,10 @@ export const updateAccount = async (
 export const deleteAccount = async (
   accountId: string
 ): Promise<{ message: string }> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.deleteAccount(accountId);
+  }
+
   const response = await api.delete<{ message: string }>(
     `/accounts/${accountId}`
   );
@@ -72,6 +97,10 @@ export const deleteAccount = async (
 export const getAccountBalance = async (
   accountId: string
 ): Promise<AccountBalance> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.getAccountBalance(accountId);
+  }
+
   const response = await api.get<{ success: boolean; balance: AccountBalance }>(
     `/accounts/${accountId}/balance`
   );
@@ -84,6 +113,10 @@ export const getAccountBalance = async (
 export const syncAccount = async (
   accountId: string
 ): Promise<{ message: string; account: Account }> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.syncAccount(accountId);
+  }
+
   const response = await api.post<{ message: string; account: Account }>(
     `/accounts/${accountId}/sync`
   );
@@ -98,6 +131,20 @@ export const syncAllAccounts = async (): Promise<{
   syncedCount: number;
   accounts: Account[];
 }> => {
+  if (USE_MOCK) {
+    // Mock implementation for sync all
+    const accountsResponse = await mockAccountsAPI.getAccounts();
+    const linkedAccounts = accountsResponse.accounts.filter(
+      (acc) => acc.isLinked
+    );
+
+    return {
+      message: `Synced ${linkedAccounts.length} accounts successfully`,
+      syncedCount: linkedAccounts.length,
+      accounts: linkedAccounts,
+    };
+  }
+
   const response = await api.post<{
     message: string;
     syncedCount: number;
@@ -112,6 +159,10 @@ export const syncAllAccounts = async (): Promise<{
 export const linkPlaidAccount = async (
   payload: PlaidLinkPayload
 ): Promise<PlaidLinkResponse> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.linkPlaidAccount(payload);
+  }
+
   const response = await api.post<PlaidLinkResponse>("/plaid/link", payload);
   return response.data;
 };
@@ -122,6 +173,10 @@ export const linkPlaidAccount = async (
 export const unlinkPlaidAccount = async (
   accountId: string
 ): Promise<{ message: string }> => {
+  if (USE_MOCK) {
+    return mockAccountsAPI.disconnectAccount(accountId);
+  }
+
   const response = await api.delete<{ message: string }>(
     `/plaid/unlink/${accountId}`
   );
@@ -135,6 +190,14 @@ export const getPlaidLinkToken = async (): Promise<{
   linkToken: string;
   expiration: string;
 }> => {
+  if (USE_MOCK) {
+    // Mock implementation
+    return {
+      linkToken: `link-sandbox-${Date.now()}`,
+      expiration: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour
+    };
+  }
+
   const response = await api.post<{
     linkToken: string;
     expiration: string;
