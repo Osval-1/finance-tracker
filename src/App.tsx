@@ -9,6 +9,10 @@ import {
   PasswordRecoveryScreen,
 } from "@/pages/auth";
 import { AccountsListScreen, AccountDetailScreen } from "@/pages/accounts";
+import {
+  TransactionsListScreen,
+  ReconciliationScreen,
+} from "@/pages/transactions";
 import { BudgetsList, BudgetDetailScreen } from "@/pages/budgets";
 import ImprovedDashboard from "@/pages/ImprovedDashboard";
 import { ROUTES } from "@/constants/routes";
@@ -62,6 +66,24 @@ function App() {
               element={
                 // <ProtectedRoute>
                 <AccountDetailScreen />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Transaction routes */}
+            <Route
+              path={ROUTES.TRANSACTIONS.LIST}
+              element={
+                // <ProtectedRoute>
+                <TransactionsListScreen />
+                // </ProtectedRoute>
+              }
+            />
+            <Route
+              path={ROUTES.TRANSACTIONS.RECONCILIATION}
+              element={
+                // <ProtectedRoute>
+                <ReconciliationScreen />
                 // </ProtectedRoute>
               }
             />

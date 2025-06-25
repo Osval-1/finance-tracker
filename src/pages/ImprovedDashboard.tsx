@@ -1,3 +1,5 @@
+import React from "react";
+import { useNavigate } from "react-router";
 import { Layout } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,64 +9,51 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import type { ChartConfig } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  CreditCard,
-  Wallet,
-  Target,
-  Activity,
   ArrowUpRight,
   ArrowDownRight,
+  CreditCard,
+  DollarSign,
+  PiggyBank,
+  Target,
+  Receipt,
+  Plus,
+  Activity,
+  Wallet,
 } from "lucide-react";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
-  BarChart,
-  Bar,
+  Tooltip,
+  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
 } from "recharts";
 
 export default function ImprovedDashboard() {
+  const navigate = useNavigate();
+
   // Sample data for charts
   const netWorthData = [
-    { month: "Jan", netWorth: 10500, assets: 15000, liabilities: 4500 },
-    { month: "Feb", netWorth: 11200, assets: 15800, liabilities: 4600 },
-    { month: "Mar", netWorth: 10800, assets: 15600, liabilities: 4800 },
-    { month: "Apr", netWorth: 11500, assets: 16200, liabilities: 4700 },
-    { month: "May", netWorth: 12100, assets: 16800, liabilities: 4700 },
-    { month: "Jun", netWorth: 12350, assets: 17050, liabilities: 4700 },
+    { month: "Jan", value: 45000 },
+    { month: "Feb", value: 46500 },
+    { month: "Mar", value: 48000 },
+    { month: "Apr", value: 47200 },
+    { month: "May", value: 49800 },
+    { month: "Jun", value: 52100 },
   ];
 
-  const expenseData = [
-    { category: "Food", amount: 1200, color: "#FF6B6B" },
-    { category: "Transport", amount: 800, color: "#4ECDC4" },
-    { category: "Entertainment", amount: 600, color: "#45B7D1" },
-    { category: "Utilities", amount: 400, color: "#96CEB4" },
-    { category: "Shopping", amount: 900, color: "#FECA57" },
-    { category: "Healthcare", amount: 300, color: "#FF9FF3" },
-  ];
-
-  const monthlySpendingData = [
-    { month: "Jan", spending: 3200, budget: 3500 },
-    { month: "Feb", spending: 2800, budget: 3500 },
-    { month: "Mar", spending: 3100, budget: 3500 },
-    { month: "Apr", spending: 3400, budget: 3500 },
-    { month: "May", spending: 3600, budget: 3500 },
-    { month: "Jun", spending: 3200, budget: 3500 },
+  const categoryData = [
+    { name: "Food & Dining", value: 950, color: "#ef4444" },
+    { name: "Transportation", value: 320, color: "#3b82f6" },
+    { name: "Entertainment", value: 180, color: "#8b5cf6" },
+    { name: "Shopping", value: 420, color: "#f59e0b" },
+    { name: "Utilities", value: 280, color: "#10b981" },
   ];
 
   const recentTransactions = [
@@ -137,21 +126,6 @@ export default function ImprovedDashboard() {
     },
   ];
 
-  const chartConfig = {
-    netWorth: {
-      label: "Net Worth",
-      color: "#4F46E5",
-    },
-    spending: {
-      label: "Spending",
-      color: "#EF4444",
-    },
-    budget: {
-      label: "Budget",
-      color: "#10B981",
-    },
-  } satisfies ChartConfig;
-
   return (
     <Layout title="Dashboard">
       {/* Background with colorful gradient */}
@@ -162,12 +136,42 @@ export default function ImprovedDashboard() {
         <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-gradient-to-br from-emerald-300/30 to-teal-400/30 rounded-full blur-3xl"></div>
 
         <div className="relative z-10 p-6 space-y-6">
-          {/* Key Metrics Cards */}
+          {/* Welcome Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welcome back, Sarah! 👋
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Here's what's happening with your finances today.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => navigate("/transactions")}
+                className="bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <Receipt className="h-4 w-4 mr-2" />
+                Add Transaction
+              </Button>
+              <Button
+                onClick={() => navigate("/accounts")}
+                variant="outline"
+                className="border-gray-300 hover:bg-gray-50 rounded-xl"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Link Account
+              </Button>
+            </div>
+          </div>
+
+          {/* Key Metrics Cards - Colorful Design Following 5-Color Rule */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden relative">
+            {/* Primary Blue - Net Worth */}
+            <Card className="border-0 bg-gradient-to-br from-blue-500 to-indigo-600 text-white overflow-hidden relative">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-emerald-50">
+                <CardTitle className="text-sm font-medium text-blue-50">
                   Net Worth
                 </CardTitle>
                 <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -175,67 +179,70 @@ export default function ImprovedDashboard() {
                 </div>
               </CardHeader>
               <CardContent className="relative z-10">
-                <div className="text-3xl font-bold text-white">$12,350</div>
-                <div className="flex items-center text-xs text-emerald-100">
-                  <TrendingUp className="mr-1 h-3 w-3" />
-                  +2.1% from last month
+                <div className="text-3xl font-bold text-white">$52,100</div>
+                <div className="flex items-center text-xs text-blue-100">
+                  <ArrowUpRight className="mr-1 h-3 w-3" />
+                  +4.2% from last month
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white overflow-hidden relative">
+            {/* Secondary Green - Monthly Budget */}
+            <Card className="border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden relative">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-rose-50">
-                  Monthly Spending
-                </CardTitle>
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <CreditCard className="h-5 w-5 text-white" />
-                </div>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <div className="text-3xl font-bold text-white">$3,200</div>
-                <div className="flex items-center text-xs text-rose-100">
-                  <TrendingDown className="mr-1 h-3 w-3" />
-                  -5.2% from last month
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 bg-gradient-to-br from-violet-500 to-purple-600 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-violet-50">
-                  Active Accounts
-                </CardTitle>
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <Wallet className="h-5 w-5 text-white" />
-                </div>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                <div className="text-3xl font-bold text-white">8</div>
-                <div className="flex items-center text-xs text-violet-100">
-                  <ArrowUpRight className="mr-1 h-3 w-3" />2 connected this
-                  month
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-amber-50">
-                  Savings Goals
+                <CardTitle className="text-sm font-medium text-emerald-50">
+                  Monthly Budget
                 </CardTitle>
                 <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                   <Target className="h-5 w-5 text-white" />
                 </div>
               </CardHeader>
               <CardContent className="relative z-10">
-                <div className="text-3xl font-bold text-white">3</div>
+                <div className="text-3xl font-bold text-white">$2,150</div>
+                <div className="flex items-center text-xs text-emerald-100">
+                  <DollarSign className="mr-1 h-3 w-3" />
+                  $1,350 left
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Accent Amber - Savings Goal */}
+            <Card className="border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                <CardTitle className="text-sm font-medium text-amber-50">
+                  Savings Goal
+                </CardTitle>
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <PiggyBank className="h-5 w-5 text-white" />
+                </div>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <div className="text-3xl font-bold text-white">68%</div>
                 <div className="flex items-center text-xs text-amber-100">
-                  <Activity className="mr-1 h-3 w-3" />
-                  67% average progress
+                  <Target className="mr-1 h-3 w-3" />
+                  $6,800 / $10,000
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Purple Special Case - Credit Score */}
+            <Card className="border-0 bg-gradient-to-br from-violet-500 to-purple-600 text-white overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                <CardTitle className="text-sm font-medium text-violet-50">
+                  Credit Score
+                </CardTitle>
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <CreditCard className="h-5 w-5 text-white" />
+                </div>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <div className="text-3xl font-bold text-white">742</div>
+                <div className="flex items-center text-xs text-violet-100">
+                  <ArrowUpRight className="mr-1 h-3 w-3" />
+                  +12 pts this month
                 </div>
               </CardContent>
             </Card>
@@ -244,110 +251,113 @@ export default function ImprovedDashboard() {
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Net Worth Trend */}
-            <Card className="border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl">
                 <CardTitle className="text-gray-800">Net Worth Trend</CardTitle>
                 <CardDescription className="text-gray-600">
-                  Your financial progress over the last 6 months
+                  Your net worth over the last 6 months
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-[200px] w-full"
-                >
-                  <LineChart data={netWorthData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="month" stroke="#64748b" />
-                    <YAxis stroke="#64748b" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line
-                      type="monotone"
-                      dataKey="netWorth"
-                      stroke="#4F46E5"
-                      strokeWidth={3}
-                      dot={{ fill: "#4F46E5", strokeWidth: 2, r: 4 }}
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={netWorthData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                    <XAxis
+                      dataKey="month"
+                      stroke="#6b7280"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
                     />
-                  </LineChart>
-                </ChartContainer>
+                    <YAxis
+                      stroke="#6b7280"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `$${value / 1000}k`}
+                    />
+                    <Tooltip
+                      formatter={(value) => [
+                        `$${value.toLocaleString()}`,
+                        "Net Worth",
+                      ]}
+                      labelStyle={{ color: "#374151" }}
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "12px",
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                      }}
+                    />
+                    <Bar
+                      dataKey="value"
+                      fill="url(#netWorthGradient)"
+                      radius={[8, 8, 0, 0]}
+                    />
+                    <defs>
+                      <linearGradient
+                        id="netWorthGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor="#3b82f6" />
+                        <stop offset="100%" stopColor="#1d4ed8" />
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            {/* Expense Breakdown */}
-            <Card className="border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-rose-50 to-pink-50">
+            {/* Spending by Category */}
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-purple-50 to-violet-50 rounded-t-2xl">
                 <CardTitle className="text-gray-800">
-                  Expense Breakdown
+                  Spending by Category
                 </CardTitle>
                 <CardDescription className="text-gray-600">
-                  Current month spending by category
+                  Current month breakdown
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
-                <ChartContainer
-                  config={chartConfig}
-                  className="h-[200px] w-full"
-                >
+                <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={expenseData}
-                      dataKey="amount"
-                      nameKey="category"
+                      data={categoryData}
                       cx="50%"
                       cy="50%"
-                      outerRadius={60}
-                      label
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: $${value}`}
+                      labelLine={false}
                     >
-                      {expenseData.map((entry, index) => (
+                      {categoryData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Tooltip
+                      formatter={(value) => [`$${value}`, "Amount"]}
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "12px",
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                      }}
+                    />
                   </PieChart>
-                </ChartContainer>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
           </div>
 
-          {/* Spending vs Budget */}
-          <Card className="border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-cyan-50">
-              <CardTitle className="text-gray-800">
-                Monthly Spending vs Budget
-              </CardTitle>
-              <CardDescription className="text-gray-600">
-                Track your spending against your monthly budget limits
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <BarChart data={monthlySpendingData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar
-                    dataKey="budget"
-                    fill="#10B981"
-                    name="Budget"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="spending"
-                    fill="#EF4444"
-                    name="Spending"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
           {/* Bottom Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Transactions */}
-            <Card className="lg:col-span-2 border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+            <Card className="lg:col-span-2 border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-t-2xl">
                 <CardTitle className="text-gray-800">
                   Recent Transactions
                 </CardTitle>
@@ -360,7 +370,8 @@ export default function ImprovedDashboard() {
                   {recentTransactions.map((transaction) => (
                     <div
                       key={transaction.id}
-                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-100"
+                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
+                      onClick={() => navigate("/transactions")}
                     >
                       <div className="flex items-center space-x-4">
                         <div
@@ -408,7 +419,8 @@ export default function ImprovedDashboard() {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 text-blue-700 hover:from-blue-100 hover:to-indigo-100"
+                  onClick={() => navigate("/transactions")}
+                  className="w-full mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 text-blue-700 hover:from-blue-100 hover:to-indigo-100 rounded-xl"
                 >
                   View All Transactions
                 </Button>
@@ -416,50 +428,60 @@ export default function ImprovedDashboard() {
             </Card>
 
             {/* Budget Overview */}
-            <Card className="border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-violet-50 to-purple-50">
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-amber-50 to-orange-50 rounded-t-2xl">
                 <CardTitle className="text-gray-800">Budget Overview</CardTitle>
                 <CardDescription className="text-gray-600">
-                  Current month progress
+                  This month's progress
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="space-y-6">
-                  {budgets.map((budget, index) => {
-                    const percentage = (budget.spent / budget.budget) * 100;
-                    return (
-                      <div key={index} className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-semibold text-gray-800">
-                            {budget.name}
-                          </span>
-                          <span className="text-sm font-medium text-gray-600">
-                            ${budget.spent} / ${budget.budget}
-                          </span>
-                        </div>
-                        <div className="relative">
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div
-                              className={`bg-gradient-to-r ${budget.color} h-3 rounded-full transition-all duration-500 ease-out`}
-                              style={{ width: `${percentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-medium text-gray-500">
-                            {percentage.toFixed(0)}% used
-                          </span>
-                          <span className="text-xs font-medium text-gray-500">
-                            ${budget.budget - budget.spent} remaining
-                          </span>
-                        </div>
+                  {budgets.map((budget, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">
+                          {budget.name}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          ${budget.spent} / ${budget.budget}
+                        </span>
                       </div>
-                    );
-                  })}
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`bg-gradient-to-r ${budget.color} h-2 rounded-full transition-all duration-300`}
+                          style={{
+                            width: `${Math.min(
+                              (budget.spent / budget.budget) * 100,
+                              100
+                            )}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`text-xs font-medium ${
+                            budget.spent > budget.budget
+                              ? "text-red-600"
+                              : budget.spent > budget.budget * 0.8
+                              ? "text-yellow-600"
+                              : "text-green-600"
+                          }`}
+                        >
+                          {((budget.spent / budget.budget) * 100).toFixed(0)}%
+                          used
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ${budget.budget - budget.spent} left
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full mt-6 bg-gradient-to-r from-violet-50 to-purple-50 border-violet-200 text-violet-700 hover:from-violet-100 hover:to-purple-100"
+                  onClick={() => navigate("/budgets")}
+                  className="w-full mt-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 text-amber-700 hover:from-amber-100 hover:to-orange-100 rounded-xl"
                 >
                   Manage Budgets
                 </Button>

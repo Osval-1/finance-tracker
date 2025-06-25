@@ -4,6 +4,7 @@ import { Plus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Layout } from "@/components/shared";
 
 import {
   useTransactions,
@@ -137,44 +138,42 @@ const TransactionsListScreen = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
+      <Layout title="Transactions">
+        <div className="container mx-auto p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </div>
         </div>
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-full" />
-          {Array.from({ length: 10 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
-        </div>
-      </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
-        <Alert variant="destructive">
-          <AlertDescription>
-            Failed to load transactions. Please try again later.
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Layout title="Transactions">
+        <div className="container mx-auto p-6">
+          <Alert variant="destructive">
+            <AlertDescription>
+              Failed to load transactions. Please try again later.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Transactions</h1>
-          <p className="text-gray-600">
-            View and manage all your financial transactions
-          </p>
-        </div>
-        <div className="flex gap-2">
+    <Layout title="Transactions">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-2">
           <Button
             variant="outline"
             onClick={handleExport}
@@ -195,110 +194,111 @@ const TransactionsListScreen = () => {
             Add Transaction
           </Button>
         </div>
-      </div>
 
-      {/* Summary Cards */}
-      {transactionsData?.summary && (
-        <TransactionSummaryCards summary={transactionsData.summary} />
-      )}
+        {/* Summary Cards */}
+        {transactionsData?.summary && (
+          <TransactionSummaryCards summary={transactionsData.summary} />
+        )}
 
-      {/* Filters */}
-      <FilterComponent
-        filters={filters}
-        searchTerm={searchTerm}
-        accounts={accounts}
-        categories={categories}
-        onSearchChange={handleSearch}
-        onFilterChange={handleFilterChange}
-      />
+        {/* Filters */}
+        <FilterComponent
+          filters={filters}
+          searchTerm={searchTerm}
+          accounts={accounts}
+          categories={categories}
+          onSearchChange={handleSearch}
+          onFilterChange={handleFilterChange}
+        />
 
-      {/* Bulk Actions */}
-      <TransactionBulkActions
-        selectedCount={selectedTransactions.length}
-        onCategorize={() => handleBulkOperation("categorize")}
-        onMarkCleared={() => handleBulkOperation("clear")}
-        onDelete={() => handleBulkOperation("delete")}
-        onExport={handleExport}
-        showExport={true}
-        isLoading={bulkOperationsMutation.isPending}
-      />
+        {/* Bulk Actions */}
+        <TransactionBulkActions
+          selectedCount={selectedTransactions.length}
+          onCategorize={() => handleBulkOperation("categorize")}
+          onMarkCleared={() => handleBulkOperation("clear")}
+          onDelete={() => handleBulkOperation("delete")}
+          onExport={handleExport}
+          showExport={true}
+          isLoading={bulkOperationsMutation.isPending}
+        />
 
-      {/* Transactions Table */}
-      <TransactionTable
-        transactions={transactions}
-        accounts={accounts}
-        categories={categories}
-        selectedTransactions={selectedTransactions}
-        pagination={pagination}
-        onSelectTransaction={handleSelectTransaction}
-        onSelectAll={handleSelectAll}
-        onEditTransaction={handleEditTransaction}
-        onCategorizeTransaction={(id) =>
-          console.log("Categorize transaction", id)
-        }
-        onDeleteTransaction={handleDeleteTransaction}
-        onPageChange={handlePageChange}
-      />
+        {/* Transactions Table */}
+        <TransactionTable
+          transactions={transactions}
+          accounts={accounts}
+          categories={categories}
+          selectedTransactions={selectedTransactions}
+          pagination={pagination}
+          onSelectTransaction={handleSelectTransaction}
+          onSelectAll={handleSelectAll}
+          onEditTransaction={handleEditTransaction}
+          onCategorizeTransaction={(id) =>
+            console.log("Categorize transaction", id)
+          }
+          onDeleteTransaction={handleDeleteTransaction}
+          onPageChange={handlePageChange}
+        />
 
-      {transactions.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <svg
-              className="h-12 w-12 mx-auto"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
+        {/* Empty State */}
+        {transactions.length === 0 && !isLoading && (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <svg
+                className="h-12 w-12 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No transactions yet
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Start tracking your finances by adding your first transaction.
+            </p>
+            <Button onClick={() => setIsAddModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Transaction
+            </Button>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No transactions yet
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Start tracking your finances by adding your first transaction.
-          </p>
-          <Button onClick={() => setIsAddModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Transaction
+        )}
+
+        {/* Floating Action Button for mobile */}
+        <div className="fixed bottom-6 right-6 md:hidden">
+          <Button
+            size="lg"
+            onClick={() => setIsAddModalOpen(true)}
+            className="rounded-full w-14 h-14 shadow-lg"
+          >
+            <Plus className="h-6 w-6" />
           </Button>
         </div>
-      )}
 
-      {/* Floating Action Button for mobile */}
-      <div className="fixed bottom-6 right-6 md:hidden">
-        <Button
-          size="lg"
-          onClick={() => setIsAddModalOpen(true)}
-          className="rounded-full w-14 h-14 shadow-lg"
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
+        {/* Transaction Entry Modal */}
+        <TransactionEntryModal
+          isOpen={isAddModalOpen || !!editingTransaction}
+          onClose={handleCloseModal}
+          transaction={editingTransaction || undefined}
+          accounts={accounts}
+          categories={categories}
+          isEditing={!!editingTransaction}
+        />
+
+        {/* Bulk Categorization Drawer */}
+        <BulkCategorizationDrawer
+          isOpen={isBulkCategorizationOpen}
+          onClose={() => setIsBulkCategorizationOpen(false)}
+          transactions={transactions}
+          categories={categories}
+        />
       </div>
-
-      {/* Transaction Entry Modal */}
-      <TransactionEntryModal
-        isOpen={isAddModalOpen || !!editingTransaction}
-        onClose={handleCloseModal}
-        transaction={editingTransaction || undefined}
-        accounts={accounts}
-        categories={categories}
-        isEditing={!!editingTransaction}
-      />
-
-      {/* Bulk Categorization Drawer */}
-      <BulkCategorizationDrawer
-        isOpen={isBulkCategorizationOpen}
-        onClose={() => setIsBulkCategorizationOpen(false)}
-        transactions={transactions}
-        categories={categories}
-      />
-    </div>
+    </Layout>
   );
 };
 

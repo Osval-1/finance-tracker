@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Layout } from "@/components/shared";
 
 import { useAccounts } from "@/hooks/accounts/useAccounts";
 import { useTransactions } from "@/hooks/transactions/useTransactions";
@@ -63,8 +64,16 @@ const ReconciliationScreen = () => {
     null
   );
 
-  const { data: accountsData } = useAccounts();
-  const { data: transactionsData } = useTransactions({
+  const {
+    data: accountsData,
+    isLoading: accountsLoading,
+    error: accountsError,
+  } = useAccounts();
+  const {
+    data: transactionsData,
+    isLoading: transactionsLoading,
+    error: transactionsError,
+  } = useTransactions({
     accountId: selectedAccountId,
     startDate,
     endDate,
@@ -227,340 +236,371 @@ const ReconciliationScreen = () => {
     );
   };
 
+  if (accountsLoading || transactionsLoading) {
+    return (
+      <Layout title="Reconciliation">
+        <div className="container mx-auto p-6 space-y-6">
+          <div className="text-center">Loading reconciliation data...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (accountsError || transactionsError) {
+    return (
+      <Layout title="Reconciliation">
+        <div className="container mx-auto p-6">
+          <Alert variant="destructive">
+            <AlertDescription>
+              Failed to load reconciliation data. Please try again later.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </Layout>
+    );
+  }
+
   if (!selectedAccountId) {
     return (
-      <div className="container mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold">Reconcile Account</h1>
-          <p className="text-gray-600">
-            Match bank statement lines to your transactions
-          </p>
+      <Layout title="Reconciliation">
+        <div className="container mx-auto p-6 space-y-6">
+          <div>
+            <h1 className="text-2xl font-semibold">Reconcile Account</h1>
+            <p className="text-gray-600">
+              Match bank statement lines to your transactions
+            </p>
+          </div>
+
+          <Card className="max-w-md">
+            <CardHeader>
+              <CardTitle>Get Started</CardTitle>
+              <CardDescription>
+                Select an account and date range to begin reconciliation
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="account">Account</Label>
+                <Select
+                  value={selectedAccountId}
+                  onValueChange={setSelectedAccountId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select account to reconcile" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        {account.name} ({account.type})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endDate">End Date</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Get Started</CardTitle>
-            <CardDescription>
-              Select an account and date range to begin reconciliation
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="account">Account</Label>
-              <Select
-                value={selectedAccountId}
-                onValueChange={setSelectedAccountId}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select account to reconcile" />
-                </SelectTrigger>
-                <SelectContent>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id}>
-                      {account.name} ({account.type})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="startDate">Start Date</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Reconcile Account</h1>
-          <p className="text-gray-600">
-            {selectedAccount?.name} - {format(new Date(startDate), "MMM d")} to{" "}
-            {format(new Date(endDate), "MMM d, yyyy")}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowUnmatchedOnly(!showUnmatchedOnly)}
-          >
-            {showUnmatchedOnly ? "Show All" : "Show Unmatched Only"}
-          </Button>
-          <Button variant="outline" onClick={() => setSelectedAccountId("")}>
-            Change Account
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-6">
-        {/* Bank Statement Lines */}
-        <Card>
-          <CardHeader className="bg-gray-100">
-            <CardTitle className="text-gray-700">
-              Bank Statement Lines
-            </CardTitle>
-            <CardDescription>
-              Drag items to match with transactions
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="min-h-96 max-h-96 overflow-y-auto">
-              {getDisplayStatementLines().map((line) => {
-                const match = getMatchForStatementLine(line.id);
-                const isLineMatched = !!match;
-
-                return (
-                  <div
-                    key={line.id}
-                    draggable={!isLineMatched}
-                    onDragStart={(e) => handleDragStart(e, line.id)}
-                    className={cn(
-                      "p-4 border-b border-gray-200",
-                      !isLineMatched && "cursor-move hover:bg-blue-50",
-                      draggedStatementId === line.id && "bg-blue-100",
-                      isLineMatched && "bg-gray-100 opacity-60"
-                    )}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="font-medium">{line.description}</div>
-                        <div className="text-sm text-gray-500">
-                          {format(new Date(line.date), "MMM d, yyyy")}
-                          {line.reference && ` • ${line.reference}`}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div
-                          className={cn(
-                            "font-medium",
-                            getAmountColor(line.amount)
-                          )}
-                        >
-                          {formatCurrency(line.amount)}
-                        </div>
-                        {isLineMatched && (
-                          <Badge variant="secondary" className="text-xs mt-1">
-                            Matched
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* App Transactions */}
-        <Card>
-          <CardHeader className="bg-gray-100">
-            <CardTitle className="text-gray-700">App Transactions</CardTitle>
-            <CardDescription>
-              Drop statement lines here to match
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="min-h-96 max-h-96 overflow-y-auto">
-              {getDisplayTransactions().map((transaction) => {
-                const match = getMatchForTransaction(transaction.id);
-                const isTransactionMatched = !!match;
-                const matchedStatementLine = match
-                  ? statementLines.find(
-                      (line) => line.id === match.statementLineId
-                    )
-                  : null;
-
-                return (
-                  <div
-                    key={transaction.id}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, transaction.id)}
-                    className={cn(
-                      "p-4 border-b border-gray-200",
-                      isTransactionMatched && "bg-green-50",
-                      !isTransactionMatched && "hover:bg-blue-50"
-                    )}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="font-medium">
-                          {transaction.merchant}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {format(new Date(transaction.date), "MMM d, yyyy")}
-                          {transaction.description &&
-                            ` • ${transaction.description}`}
-                        </div>
-                        {isTransactionMatched && matchedStatementLine && (
-                          <div className="mt-2 p-2 bg-white rounded border">
-                            <div className="text-xs text-gray-600 mb-1">
-                              Matched with:
-                            </div>
-                            <div className="text-sm">
-                              {matchedStatementLine.description}
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="mt-2 h-6 text-xs"
-                              onClick={() =>
-                                handleUnmatch(
-                                  matchedStatementLine.id,
-                                  transaction.id
-                                )
-                              }
-                            >
-                              Unmatch
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div
-                          className={cn(
-                            "font-medium",
-                            getAmountColor(transaction.amount)
-                          )}
-                        >
-                          {formatCurrency(transaction.amount)}
-                        </div>
-                        {isTransactionMatched && (
-                          <Badge variant="default" className="text-xs mt-1">
-                            <span className="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                            Matched
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Summary Panel */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Reconciliation Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-4 gap-6">
-            <div>
-              <Label htmlFor="statementBalance">Statement Ending Balance</Label>
-              <Input
-                id="statementBalance"
-                type="number"
-                step="0.01"
-                value={statementBalance}
-                onChange={(e) =>
-                  setStatementBalance(parseFloat(e.target.value) || 0)
-                }
-                placeholder="0.00"
-              />
-            </div>
-            <div>
-              <Label>App Balance (Matched)</Label>
-              <div className="mt-2 text-2xl font-semibold">
-                {formatCurrency(calculateAppBalance())}
-              </div>
-            </div>
-            <div>
-              <Label>Difference</Label>
-              <div
-                className={cn(
-                  "mt-2 text-2xl font-semibold",
-                  Math.abs(calculateDifference()) < 0.01
-                    ? "text-green-600"
-                    : "text-red-600"
-                )}
-              >
-                {formatCurrency(calculateDifference())}
-              </div>
-            </div>
-            <div className="flex items-end gap-2">
-              <Button
-                onClick={handleFinishReconciliation}
-                disabled={!canFinishReconciliation()}
-                className={cn(
-                  Math.abs(calculateDifference()) < 0.01
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-gray-400"
-                )}
-              >
-                Finish Reconciliation
-              </Button>
-              <Button variant="outline">Cancel</Button>
-            </div>
+    <Layout title="Reconciliation">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Reconcile Account</h1>
+            <p className="text-gray-600">
+              {selectedAccount?.name} - {format(new Date(startDate), "MMM d")}{" "}
+              to {format(new Date(endDate), "MMM d, yyyy")}
+            </p>
           </div>
-
-          {Math.abs(calculateDifference()) > 0.01 && statementBalance !== 0 && (
-            <Alert className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Your balances do not match. Please review your matches or check
-                for missing transactions.
-              </AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Reconciliation</DialogTitle>
-            <DialogDescription>
-              Your balances do not match. There is a difference of{" "}
-              <strong>{formatCurrency(calculateDifference())}</strong>. Are you
-              sure you want to finish reconciliation?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
+          <div className="flex gap-2">
             <Button
               variant="outline"
-              onClick={() => setShowConfirmDialog(false)}
+              onClick={() => setShowUnmatchedOnly(!showUnmatchedOnly)}
             >
-              Review Again
+              {showUnmatchedOnly ? "Show All" : "Show Unmatched Only"}
             </Button>
-            <Button
-              onClick={() => {
-                setShowConfirmDialog(false);
-                console.log("Reconciliation completed with differences");
-                // In real app: proceed with reconciliation
-              }}
-            >
-              Yes, Finish Anyway
+            <Button variant="outline" onClick={() => setSelectedAccountId("")}>
+              Change Account
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
+          {/* Bank Statement Lines */}
+          <Card>
+            <CardHeader className="bg-gray-100">
+              <CardTitle className="text-gray-700">
+                Bank Statement Lines
+              </CardTitle>
+              <CardDescription>
+                Drag items to match with transactions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="min-h-96 max-h-96 overflow-y-auto">
+                {getDisplayStatementLines().map((line) => {
+                  const match = getMatchForStatementLine(line.id);
+                  const isLineMatched = !!match;
+
+                  return (
+                    <div
+                      key={line.id}
+                      draggable={!isLineMatched}
+                      onDragStart={(e) => handleDragStart(e, line.id)}
+                      className={cn(
+                        "p-4 border-b border-gray-200",
+                        !isLineMatched && "cursor-move hover:bg-blue-50",
+                        draggedStatementId === line.id && "bg-blue-100",
+                        isLineMatched && "bg-gray-100 opacity-60"
+                      )}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-medium">{line.description}</div>
+                          <div className="text-sm text-gray-500">
+                            {format(new Date(line.date), "MMM d, yyyy")}
+                            {line.reference && ` • ${line.reference}`}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div
+                            className={cn(
+                              "font-medium",
+                              getAmountColor(line.amount)
+                            )}
+                          >
+                            {formatCurrency(line.amount)}
+                          </div>
+                          {isLineMatched && (
+                            <Badge variant="secondary" className="text-xs mt-1">
+                              Matched
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* App Transactions */}
+          <Card>
+            <CardHeader className="bg-gray-100">
+              <CardTitle className="text-gray-700">App Transactions</CardTitle>
+              <CardDescription>
+                Drop statement lines here to match
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="min-h-96 max-h-96 overflow-y-auto">
+                {getDisplayTransactions().map((transaction) => {
+                  const match = getMatchForTransaction(transaction.id);
+                  const isTransactionMatched = !!match;
+                  const matchedStatementLine = match
+                    ? statementLines.find(
+                        (line) => line.id === match.statementLineId
+                      )
+                    : null;
+
+                  return (
+                    <div
+                      key={transaction.id}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, transaction.id)}
+                      className={cn(
+                        "p-4 border-b border-gray-200",
+                        isTransactionMatched && "bg-green-50",
+                        !isTransactionMatched && "hover:bg-blue-50"
+                      )}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-medium">
+                            {transaction.merchant}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {format(new Date(transaction.date), "MMM d, yyyy")}
+                            {transaction.description &&
+                              ` • ${transaction.description}`}
+                          </div>
+                          {isTransactionMatched && matchedStatementLine && (
+                            <div className="mt-2 p-2 bg-white rounded border">
+                              <div className="text-xs text-gray-600 mb-1">
+                                Matched with:
+                              </div>
+                              <div className="text-sm">
+                                {matchedStatementLine.description}
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="mt-2 h-6 text-xs"
+                                onClick={() =>
+                                  handleUnmatch(
+                                    matchedStatementLine.id,
+                                    transaction.id
+                                  )
+                                }
+                              >
+                                Unmatch
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <div
+                            className={cn(
+                              "font-medium",
+                              getAmountColor(transaction.amount)
+                            )}
+                          >
+                            {formatCurrency(transaction.amount)}
+                          </div>
+                          {isTransactionMatched && (
+                            <Badge variant="default" className="text-xs mt-1">
+                              <span className="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                              Matched
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Summary Panel */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Reconciliation Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 gap-6">
+              <div>
+                <Label htmlFor="statementBalance">
+                  Statement Ending Balance
+                </Label>
+                <Input
+                  id="statementBalance"
+                  type="number"
+                  step="0.01"
+                  value={statementBalance}
+                  onChange={(e) =>
+                    setStatementBalance(parseFloat(e.target.value) || 0)
+                  }
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <Label>App Balance (Matched)</Label>
+                <div className="mt-2 text-2xl font-semibold">
+                  {formatCurrency(calculateAppBalance())}
+                </div>
+              </div>
+              <div>
+                <Label>Difference</Label>
+                <div
+                  className={cn(
+                    "mt-2 text-2xl font-semibold",
+                    Math.abs(calculateDifference()) < 0.01
+                      ? "text-green-600"
+                      : "text-red-600"
+                  )}
+                >
+                  {formatCurrency(calculateDifference())}
+                </div>
+              </div>
+              <div className="flex items-end gap-2">
+                <Button
+                  onClick={handleFinishReconciliation}
+                  disabled={!canFinishReconciliation()}
+                  className={cn(
+                    Math.abs(calculateDifference()) < 0.01
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-gray-400"
+                  )}
+                >
+                  Finish Reconciliation
+                </Button>
+                <Button variant="outline">Cancel</Button>
+              </div>
+            </div>
+
+            {Math.abs(calculateDifference()) > 0.01 &&
+              statementBalance !== 0 && (
+                <Alert className="mt-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Your balances do not match. Please review your matches or
+                    check for missing transactions.
+                  </AlertDescription>
+                </Alert>
+              )}
+          </CardContent>
+        </Card>
+
+        {/* Confirmation Dialog */}
+        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Reconciliation</DialogTitle>
+              <DialogDescription>
+                Your balances do not match. There is a difference of{" "}
+                <strong>{formatCurrency(calculateDifference())}</strong>. Are
+                you sure you want to finish reconciliation?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowConfirmDialog(false)}
+              >
+                Review Again
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowConfirmDialog(false);
+                  console.log("Reconciliation completed with differences");
+                  // In real app: proceed with reconciliation
+                }}
+              >
+                Yes, Finish Anyway
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </Layout>
   );
 };
 
