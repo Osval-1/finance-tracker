@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions,
+ type ChartOptions,
 } from "chart.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
