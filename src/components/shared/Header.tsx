@@ -24,6 +24,8 @@ import {
   Menu,
 } from "lucide-react";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { useNavigate } from "react-router";
+import { ROUTES } from "@/constants/routes";
 
 interface HeaderProps {
   title?: string;
@@ -34,6 +36,7 @@ interface HeaderProps {
 export function Header({ title, showSearch = true, onMenuClick }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const notifications = [
     {
@@ -202,7 +205,10 @@ export function Header({ title, showSearch = true, onMenuClick }: HeaderProps) {
                 ))}
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer rounded-lg m-1">
+              <DropdownMenuItem
+                onClick={() => navigate(ROUTES.NOTIFICATIONS.CENTER)}
+                className="text-center text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer rounded-lg m-1"
+              >
                 View all notifications
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -249,7 +255,10 @@ export function Header({ title, showSearch = true, onMenuClick }: HeaderProps) {
                 <CreditCard className="mr-2 h-4 w-4" />
                 <span>Billing</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-blue-50 rounded-lg m-1 cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => navigate(ROUTES.SETTINGS.OVERVIEW)}
+                className="hover:bg-blue-50 rounded-lg m-1 cursor-pointer"
+              >
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>

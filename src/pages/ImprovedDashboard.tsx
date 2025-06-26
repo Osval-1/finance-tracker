@@ -409,7 +409,7 @@ export default function ImprovedDashboard() {
                         </p>
                         <Badge
                           variant="outline"
-                          className="text-xs bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200 text-purple-700"
+                          className="text-xs bg-blue-50 border-blue-200 text-blue-700"
                         >
                           {transaction.category}
                         </Badge>

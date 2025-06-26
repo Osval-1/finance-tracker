@@ -43,7 +43,7 @@ interface PaginationInfo {
   page: number;
   limit: number;
   totalPages: number;
-  totalItems: number;
+  total: number;
 }
 
 interface TransactionTableProps {

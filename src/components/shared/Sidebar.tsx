@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
+import { ROUTES } from "@/constants/routes";
 
 interface SidebarProps {
   className?: string;
@@ -33,37 +34,37 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     {
       title: "Dashboard",
       icon: LayoutDashboard,
-      path: "/dashboard",
+      path: ROUTES.DASHBOARD,
       badge: null,
     },
     {
       title: "Accounts",
       icon: Wallet,
-      path: "/accounts",
+      path: ROUTES.ACCOUNTS.LIST,
       badge: null,
     },
     {
       title: "Transactions",
       icon: Receipt,
-      path: "/transactions",
+      path: ROUTES.TRANSACTIONS.LIST,
       badge: "23",
     },
     {
       title: "Budgets",
       icon: Target,
-      path: "/budgets",
+      path: ROUTES.BUDGETS.LIST,
       badge: null,
     },
     {
       title: "Goals",
       icon: Target,
-      path: "/goals",
+      path: ROUTES.GOALS.LIST,
       badge: null,
     },
     {
       title: "Reports",
       icon: BarChart3,
-      path: "/reports",
+      path: ROUTES.REPORTS.DASHBOARD,
       badge: null,
     },
   ];
@@ -72,19 +73,19 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     {
       title: "Notifications",
       icon: Bell,
-      path: "/notifications",
+      path: ROUTES.NOTIFICATIONS.CENTER,
       badge: "3",
     },
     {
       title: "Settings",
       icon: Settings,
-      path: "/settings",
+      path: ROUTES.SETTINGS.OVERVIEW,
       badge: null,
     },
     {
       title: "Help",
       icon: HelpCircle,
-      path: "/help",
+      path: ROUTES.HELP.CENTER,
       badge: null,
     },
   ];

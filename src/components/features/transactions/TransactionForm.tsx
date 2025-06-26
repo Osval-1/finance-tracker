@@ -254,14 +254,19 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         <div>
           <Label htmlFor="category">Category</Label>
           <Select
-            value={formData.categoryId}
-            onValueChange={(value) => updateFormData("categoryId", value)}
+            value={formData.categoryId || "uncategorized"}
+            onValueChange={(value) =>
+              updateFormData(
+                "categoryId",
+                value === "uncategorized" ? "" : value
+              )
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Uncategorized</SelectItem>
+              <SelectItem value="uncategorized">Uncategorized</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}

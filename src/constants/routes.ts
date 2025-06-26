@@ -48,6 +48,16 @@ export const ROUTES = {
     SECURITY: "/settings/security",
   },
 
+  // Notification routes
+  NOTIFICATIONS: {
+    CENTER: "/notifications",
+  },
+
+  // Help routes
+  HELP: {
+    CENTER: "/help",
+  },
+
   // Legal routes
   TERMS: "/terms",
   PRIVACY: "/privacy",

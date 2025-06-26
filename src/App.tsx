@@ -14,7 +14,12 @@ import {
   ReconciliationScreen,
 } from "@/pages/transactions";
 import { BudgetsList, BudgetDetailScreen } from "@/pages/budgets";
+import { GoalsList } from "@/pages/goals";
+import { ReportsDashboard } from "@/pages/reports";
 import ImprovedDashboard from "@/pages/ImprovedDashboard";
+import SettingsOverviewScreen from "@/pages/settings/SettingsOverviewScreen";
+import NotificationCenterScreen from "@/pages/notifications/NotificationCenterScreen";
+import HelpCenterScreen from "@/pages/help/HelpCenterScreen";
 import { ROUTES } from "@/constants/routes";
 
 import "./App.css";
@@ -102,6 +107,56 @@ function App() {
               element={
                 // <ProtectedRoute>
                 <BudgetDetailScreen />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Goals routes */}
+            <Route
+              path={ROUTES.GOALS.LIST}
+              element={
+                // <ProtectedRoute>
+                <GoalsList />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Reports routes */}
+            <Route
+              path={ROUTES.REPORTS.DASHBOARD}
+              element={
+                // <ProtectedRoute>
+                <ReportsDashboard />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Settings routes */}
+            <Route
+              path={ROUTES.SETTINGS.OVERVIEW}
+              element={
+                // <ProtectedRoute>
+                <SettingsOverviewScreen />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Notification routes */}
+            <Route
+              path={ROUTES.NOTIFICATIONS.CENTER}
+              element={
+                // <ProtectedRoute>
+                <NotificationCenterScreen />
+                // </ProtectedRoute>
+              }
+            />
+
+            {/* Help routes */}
+            <Route
+              path={ROUTES.HELP.CENTER}
+              element={
+                // <ProtectedRoute>
+                <HelpCenterScreen />
                 // </ProtectedRoute>
               }
             />

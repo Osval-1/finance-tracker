@@ -9,7 +9,13 @@ import {
   TrendingUp,
   ArrowUpRight,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -226,106 +232,137 @@ export function BudgetsListScreen() {
           </div>
         </div>
 
-        {/* Key Metrics Cards - Same as Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Primary Blue - Total Budgeted */}
-          <Card className="border-0 bg-gradient-to-br from-blue-500 to-indigo-600 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-sm font-medium text-blue-50">
-                Total Budgeted
-              </CardTitle>
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <DollarSign className="h-5 w-5 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className="text-3xl font-bold text-white">
-                ${totalBudgeted.toLocaleString()}
-              </div>
-              <div className="flex items-center text-xs text-blue-100">
-                <TrendingUp className="mr-1 h-3 w-3" />
-                {budgets.length} active budgets
-              </div>
-            </CardContent>
-          </Card>
+        {/* Enhanced Summary Cards */}
+        {budgetsResponse?.summary && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-sm font-medium text-gray-700">
+                      Total Budget Health
+                    </CardTitle>
+                    <CardDescription className="text-xs text-gray-500 mt-1">
+                      Overall spending performance
+                    </CardDescription>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Target className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="text-3xl font-bold text-gray-900 mb-2">
+                  {statusCounts.over > 0
+                    ? "Attention"
+                    : statusCounts.near > 0
+                    ? "Caution"
+                    : "Excellent"}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div
+                    className={`flex items-center space-x-1 px-2 py-1 rounded-full ${
+                      statusCounts.over > 0
+                        ? "bg-red-100"
+                        : statusCounts.near > 0
+                        ? "bg-amber-100"
+                        : "bg-green-100"
+                    }`}
+                  >
+                    <ArrowUpRight
+                      className={`w-3 h-3 ${
+                        statusCounts.over > 0
+                          ? "text-red-600"
+                          : statusCounts.near > 0
+                          ? "text-amber-600"
+                          : "text-green-600"
+                      }`}
+                    />
+                    <span
+                      className={`text-xs font-medium ${
+                        statusCounts.over > 0
+                          ? "text-red-700"
+                          : statusCounts.near > 0
+                          ? "text-amber-700"
+                          : "text-green-700"
+                      }`}
+                    >
+                      {statusCounts.over} over budget
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Secondary Green - Total Spent */}
-          <Card className="border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-sm font-medium text-emerald-50">
-                Total Spent
-              </CardTitle>
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <TrendingUp className="h-5 w-5 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className="text-3xl font-bold text-white">
-                ${totalSpent.toLocaleString()}
-              </div>
-              <div className="flex items-center text-xs text-emerald-100">
-                <DollarSign className="mr-1 h-3 w-3" />
-                {spentPercentage.toFixed(1)}% of budget
-              </div>
-            </CardContent>
-          </Card>
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-sm font-medium text-gray-700">
+                      Budget Utilization
+                    </CardTitle>
+                    <CardDescription className="text-xs text-gray-500 mt-1">
+                      Percentage of budget spent
+                    </CardDescription>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="text-3xl font-bold text-emerald-600 mb-2">
+                  {spentPercentage.toFixed(1)}%
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 bg-blue-100 px-2 py-1 rounded-full">
+                    <DollarSign className="w-3 h-3 text-blue-600" />
+                    <span className="text-blue-700 text-xs font-medium">
+                      ${totalSpent.toLocaleString()} spent
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Accent Amber - Remaining Budget */}
-          <Card className="border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-sm font-medium text-amber-50">
-                Remaining Budget
-              </CardTitle>
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <Target className="h-5 w-5 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className="text-3xl font-bold text-white">
-                ${totalRemaining.toLocaleString()}
-              </div>
-              <div className="flex items-center text-xs text-amber-100">
-                <ArrowUpRight className="mr-1 h-3 w-3" />
-                Available to spend
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Purple Special Case - Budget Health */}
-          <Card className="border-0 bg-gradient-to-br from-violet-500 to-purple-600 text-white overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-sm font-medium text-violet-50">
-                Budget Health
-              </CardTitle>
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <Target className="h-5 w-5 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className="text-3xl font-bold text-white">
-                {statusCounts.over > 0
-                  ? "Attention"
-                  : statusCounts.near > 0
-                  ? "Caution"
-                  : "Good"}
-              </div>
-              <div className="flex items-center text-xs text-violet-100">
-                <ArrowUpRight className="mr-1 h-3 w-3" />
-                {statusCounts.over} over budget
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-sm font-medium text-gray-700">
+                      Available Budget
+                    </CardTitle>
+                    <CardDescription className="text-xs text-gray-500 mt-1">
+                      Remaining amount to spend
+                    </CardDescription>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <DollarSign className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="text-3xl font-bold text-amber-600 mb-2">
+                  ${totalRemaining.toLocaleString()}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1 bg-purple-100 px-2 py-1 rounded-full">
+                    <Target className="w-3 h-3 text-purple-600" />
+                    <span className="text-purple-700 text-xs font-medium">
+                      {budgets.length} active budgets
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Budget Overview Widget */}
         <BudgetOverview />
 
         {/* Filters and Search */}
-        <Card>
+        <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Filter className="h-5 w-5" />
@@ -409,7 +446,10 @@ export function BudgetsListScreen() {
         {budgetsLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="p-4">
+              <Card
+                key={i}
+                className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-4"
+              >
                 <Skeleton className="h-6 w-32 mb-4" />
                 <Skeleton className="h-4 w-24 mb-2" />
                 <Skeleton className="h-2 w-full mb-4" />
@@ -421,7 +461,7 @@ export function BudgetsListScreen() {
             ))}
           </div>
         ) : sortedBudgets.length === 0 ? (
-          <Card className="p-8 text-center">
+          <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 text-center">
             <CardContent>
               <h3 className="text-lg font-semibold mb-2">
                 {searchQuery || statusFilter !== "all" || periodFilter !== "all"
@@ -441,7 +481,12 @@ export function BudgetsListScreen() {
                 statusFilter === "all" &&
                 periodFilter === "all" &&
                 !showArchived && (
-                  <Button onClick={openCreateModal}>Create Budget</Button>
+                  <Button
+                    onClick={openCreateModal}
+                    className="bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    Create Budget
+                  </Button>
                 )}
             </CardContent>
           </Card>
