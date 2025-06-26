@@ -252,7 +252,7 @@ export default function ImprovedDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Net Worth Trend */}
             <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <CardTitle className="text-gray-800">Net Worth Trend</CardTitle>
                 <CardDescription className="text-gray-600">
                   Your net worth over the last 6 months
@@ -313,7 +313,7 @@ export default function ImprovedDashboard() {
 
             {/* Spending by Category */}
             <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-purple-50 to-violet-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <CardTitle className="text-gray-800">
                   Spending by Category
                 </CardTitle>
@@ -357,7 +357,7 @@ export default function ImprovedDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Transactions */}
             <Card className="lg:col-span-2 border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <CardTitle className="text-gray-800">
                   Recent Transactions
                 </CardTitle>
@@ -429,7 +429,7 @@ export default function ImprovedDashboard() {
 
             {/* Budget Overview */}
             <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-amber-50 to-orange-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <CardTitle className="text-gray-800">Budget Overview</CardTitle>
                 <CardDescription className="text-gray-600">
                   This month's progress
@@ -491,7 +491,7 @@ export default function ImprovedDashboard() {
 
           {/* Quick Actions */}
           <Card className="border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-blue-50">
+            <CardHeader className="border-b border-gray-100 bg-white">
               <CardTitle className="text-gray-800">Quick Actions</CardTitle>
               <CardDescription className="text-gray-600">
                 Frequently used features for faster access

@@ -90,14 +90,14 @@ export const TransactionEntryModal: React.FC<TransactionEntryModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[95vh] w-full mx-4 overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-xl font-semibold">
                 {isEditing ? "Edit Transaction" : "Add Transaction"}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="hidden sm:block">
                 {isEditing
                   ? "Update the transaction details below"
                   : "Enter the details for your new transaction"}
@@ -107,7 +107,7 @@ export const TransactionEntryModal: React.FC<TransactionEntryModalProps> = ({
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-6 w-6"
+              className="h-6 w-6 md:hidden"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -132,7 +132,7 @@ export const TransactionEntryModal: React.FC<TransactionEntryModalProps> = ({
               variant="outline"
               onClick={handleDelete}
               disabled={isLoading}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto"
             >
               Delete Transaction
             </Button>

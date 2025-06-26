@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Layout } from "@/components/shared";
 
 import {
   useAccounts,
@@ -140,7 +141,7 @@ const AccountsListScreen = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <Layout title="Accounts">
         <div className="container mx-auto p-6 space-y-8">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
@@ -170,13 +171,13 @@ const AccountsListScreen = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <Layout title="Accounts">
         <div className="container mx-auto p-6">
           <Alert
             variant="destructive"
@@ -188,7 +189,7 @@ const AccountsListScreen = () => {
             </AlertDescription>
           </Alert>
         </div>
-      </div>
+      </Layout>
     );
   }
 
@@ -196,12 +197,11 @@ const AccountsListScreen = () => {
   const groupedAccounts = groupAccountsByType(accounts);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout title="Accounts">
       <div className="container mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Accounts</h1>
             <p className="text-gray-600 mt-1">
               Manage your bank accounts, credit cards, and investments
             </p>
@@ -266,11 +266,104 @@ const AccountsListScreen = () => {
           </div>
         </div>
 
+        {/* Key Metrics Cards - Same as Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Primary Blue - Net Worth */}
+          <Card className="border-0 bg-gradient-to-br from-blue-500 to-indigo-600 text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+              <CardTitle className="text-sm font-medium text-blue-50">
+                Net Worth
+              </CardTitle>
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <DollarSign className="h-5 w-5 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-white">
+                {accountsData
+                  ? formatCurrency(accountsData.totalNetWorth)
+                  : "$0"}
+              </div>
+              <div className="flex items-center text-xs text-blue-100">
+                <ArrowUpRight className="mr-1 h-3 w-3" />
+                +4.2% from last month
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Secondary Green - Total Assets */}
+          <Card className="border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+              <CardTitle className="text-sm font-medium text-emerald-50">
+                Total Assets
+              </CardTitle>
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <PiggyBank className="h-5 w-5 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-white">
+                {accountsData ? formatCurrency(accountsData.totalAssets) : "$0"}
+              </div>
+              <div className="flex items-center text-xs text-emerald-100">
+                <DollarSign className="mr-1 h-3 w-3" />
+                {accounts.length} accounts
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Accent Amber - Total Liabilities */}
+          <Card className="border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+              <CardTitle className="text-sm font-medium text-amber-50">
+                Total Liabilities
+              </CardTitle>
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <CreditCard className="h-5 w-5 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-white">
+                {accountsData
+                  ? formatCurrency(accountsData.totalLiabilities)
+                  : "$0"}
+              </div>
+              <div className="flex items-center text-xs text-amber-100">
+                <ArrowDownRight className="mr-1 h-3 w-3" />
+                -1.2% vs last month
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Purple Special Case - Account Health */}
+          <Card className="border-0 bg-gradient-to-br from-violet-500 to-purple-600 text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+              <CardTitle className="text-sm font-medium text-violet-50">
+                Account Health
+              </CardTitle>
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <CheckCircle className="h-5 w-5 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10">
+              <div className="text-3xl font-bold text-white">Excellent</div>
+              <div className="flex items-center text-xs text-violet-100">
+                <ArrowUpRight className="mr-1 h-3 w-3" />
+                All accounts synced
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Enhanced Summary Cards */}
         {accountsData && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-sm font-medium text-gray-700">
@@ -302,7 +395,7 @@ const AccountsListScreen = () => {
             </Card>
 
             <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-sm font-medium text-gray-700">
@@ -333,7 +426,7 @@ const AccountsListScreen = () => {
             </Card>
 
             <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-red-50 to-rose-50 rounded-t-2xl">
+              <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-sm font-medium text-gray-700">
@@ -514,7 +607,7 @@ const AccountsListScreen = () => {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 };
 
@@ -560,30 +653,9 @@ const AccountCard = ({
     }
   };
 
-  const getCardGradient = (type: Account["type"]) => {
-    switch (type) {
-      case "checking":
-        return "from-blue-50 to-indigo-50";
-      case "savings":
-        return "from-green-50 to-emerald-50";
-      case "credit":
-        return "from-orange-50 to-amber-50";
-      case "investment":
-        return "from-purple-50 to-violet-50";
-      case "loan":
-        return "from-red-50 to-rose-50";
-      default:
-        return "from-gray-50 to-slate-50";
-    }
-  };
-
   return (
     <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
-      <CardHeader
-        className={`border-b border-gray-100 bg-gradient-to-r ${getCardGradient(
-          account.type
-        )} rounded-t-2xl`}
-      >
+      <CardHeader className="border-b border-gray-100 bg-white rounded-t-2xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-white rounded-xl shadow-sm">
@@ -608,24 +680,30 @@ const AccountCard = ({
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl">
-              <DropdownMenuItem className="rounded-lg">
+            <DropdownMenuContent
+              align="end"
+              className="rounded-xl bg-white/95 backdrop-blur-sm border-white/20"
+            >
+              <DropdownMenuItem className="rounded-lg cursor-pointer hover:bg-blue-50 m-1">
                 <Eye className="h-4 w-4 mr-2" />
                 View Details
               </DropdownMenuItem>
-              <DropdownMenuItem className="rounded-lg">
+              <DropdownMenuItem className="rounded-lg cursor-pointer hover:bg-blue-50 m-1">
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Account
               </DropdownMenuItem>
               {account.isLinked && (
-                <DropdownMenuItem className="rounded-lg" onClick={onUnlink}>
+                <DropdownMenuItem
+                  className="rounded-lg cursor-pointer hover:bg-blue-50 m-1"
+                  onClick={onUnlink}
+                >
                   <Unlink className="h-4 w-4 mr-2" />
                   Disconnect
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-red-600 rounded-lg"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer m-1"
                 onClick={onDelete}
               >
                 <Trash2 className="h-4 w-4 mr-2" />

@@ -71,7 +71,7 @@ export const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectValue placeholder="All Accounts" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Accounts</SelectItem>
+              <SelectItem value="All">All Accounts</SelectItem>
               {accounts.map((account) => (
                 <SelectItem key={account.id} value={account.id}>
                   {account.name}
@@ -89,7 +89,7 @@ export const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="All">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
@@ -107,7 +107,7 @@ export const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectValue placeholder="All Sources" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Sources</SelectItem>
+              <SelectItem value="All">All Sources</SelectItem>
               <SelectItem value="plaid">Plaid</SelectItem>
               <SelectItem value="manual">Manual</SelectItem>
               <SelectItem value="file">File Import</SelectItem>

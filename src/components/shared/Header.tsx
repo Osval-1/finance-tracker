@@ -21,15 +21,17 @@ import {
   Users,
   PlusCircle,
   Sparkles,
+  Menu,
 } from "lucide-react";
 import { useAuth } from "@/hooks/auth/useAuth";
 
 interface HeaderProps {
   title?: string;
   showSearch?: boolean;
+  onMenuClick?: () => void;
 }
 
-export function Header({ title, showSearch = true }: HeaderProps) {
+export function Header({ title, showSearch = true, onMenuClick }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { user, logout } = useAuth();
 
@@ -60,22 +62,36 @@ export function Header({ title, showSearch = true }: HeaderProps) {
   const unreadCount = notifications.length;
 
   return (
-    <header className="bg-slate-900 border-b border-slate-700 px-6 py-4 relative overflow-hidden">
+    <header className="bg-slate-900 border-b border-slate-700 px-4 md:px-6 py-4 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
 
       <div className="flex items-center justify-between relative z-10">
-        {/* Left side - Title and Search */}
-        <div className="flex items-center space-x-6 flex-1">
+        {/* Left side - Mobile menu, Title and Search */}
+        <div className="flex items-center space-x-4 flex-1">
+          {/* Mobile menu button */}
+          {onMenuClick && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onMenuClick}
+              className="text-slate-400 hover:text-white hover:bg-slate-800 md:hidden"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+          )}
+
           {title && (
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">{title}</h1>
-                <p className="text-sm text-slate-300">
+                <h1 className="text-xl md:text-2xl font-bold text-white">
+                  {title}
+                </h1>
+                <p className="text-xs md:text-sm text-slate-300 hidden sm:block">
                   {new Date().toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
@@ -88,7 +104,7 @@ export function Header({ title, showSearch = true }: HeaderProps) {
           )}
 
           {showSearch && (
-            <div className="relative max-w-md w-full">
+            <div className="relative max-w-md w-full hidden sm:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 type="text"
@@ -102,15 +118,27 @@ export function Header({ title, showSearch = true }: HeaderProps) {
         </div>
 
         {/* Right side - Actions and Profile */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           {/* Quick Add Button */}
           <Button
             size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hidden sm:flex"
           >
             <PlusCircle className="w-4 h-4 mr-2" />
-            Add Transaction
+            <span className="hidden md:inline">Add Transaction</span>
+            <span className="md:hidden">Add</span>
           </Button>
+
+          {/* Mobile search button */}
+          {showSearch && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-slate-400 hover:text-white hover:bg-slate-800 sm:hidden"
+            >
+              <Search className="w-5 h-5" />
+            </Button>
+          )}
 
           {/* Notifications */}
           <DropdownMenu>
@@ -185,7 +213,7 @@ export function Header({ title, showSearch = true }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-3 hover:bg-slate-800 px-3 py-2 rounded-xl text-white"
+                className="flex items-center space-x-2 md:space-x-3 hover:bg-slate-800 px-2 md:px-3 py-2 rounded-xl text-white"
               >
                 <Avatar className="w-8 h-8 ring-2 ring-white/30">
                   <AvatarImage
@@ -197,7 +225,7 @@ export function Header({ title, showSearch = true }: HeaderProps) {
                     {user?.lastName?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div className="text-left hidden sm:block">
+                <div className="text-left hidden md:block">
                   <p className="text-sm font-medium text-white">
                     {user?.firstName} {user?.lastName}
                   </p>
@@ -209,31 +237,33 @@ export function Header({ title, showSearch = true }: HeaderProps) {
               align="end"
               className="w-56 rounded-xl bg-white/95 backdrop-blur-sm border-white/20"
             >
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-gray-700">
+                My Account
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer hover:bg-blue-50 rounded-lg m-1">
-                <User className="w-4 h-4 mr-2" />
-                Profile
+              <DropdownMenuItem className="hover:bg-blue-50 rounded-lg m-1 cursor-pointer">
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-blue-50 rounded-lg m-1">
-                <CreditCard className="w-4 h-4 mr-2" />
-                Billing
+              <DropdownMenuItem className="hover:bg-blue-50 rounded-lg m-1 cursor-pointer">
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Billing</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-blue-50 rounded-lg m-1">
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
+              <DropdownMenuItem className="hover:bg-blue-50 rounded-lg m-1 cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-blue-50 rounded-lg m-1">
-                <Users className="w-4 h-4 mr-2" />
-                Team
+              <DropdownMenuItem className="hover:bg-blue-50 rounded-lg m-1 cursor-pointer">
+                <Users className="mr-2 h-4 w-4" />
+                <span>Team</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg m-1"
                 onClick={logout}
+                className="hover:bg-red-50 text-red-600 hover:text-red-700 rounded-lg m-1 cursor-pointer"
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign out
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

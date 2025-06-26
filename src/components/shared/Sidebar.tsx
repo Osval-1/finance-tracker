@@ -15,14 +15,16 @@ import {
   ChevronLeft,
   ChevronRight,
   PlusCircle,
+  X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 
 interface SidebarProps {
   className?: string;
+  onClose?: () => void;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onClose }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -104,6 +106,13 @@ export function Sidebar({ className }: SidebarProps) {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -112,7 +121,7 @@ export function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      {/* Logo and Collapse Button */}
+      {/* Logo and Collapse/Close Button */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
         {!collapsed && (
           <div className="flex items-center space-x-2">
@@ -122,22 +131,36 @@ export function Sidebar({ className }: SidebarProps) {
             <span className="font-bold text-lg">FinanceTracker</span>
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-white hover:bg-slate-800"
-        >
-          {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
-          ) : (
-            <ChevronLeft className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          {/* Close button for mobile */}
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="text-slate-400 hover:text-white hover:bg-slate-800 md:hidden"
+            >
+              <X className="w-4 h-4" />
+            </Button>
           )}
-        </Button>
+          {/* Collapse button for desktop */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCollapsed(!collapsed)}
+            className="text-slate-400 hover:text-white hover:bg-slate-800 hidden md:flex"
+          >
+            {collapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <ChevronLeft className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Main Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         <div className="space-y-1">
           {mainNavItems.map((item) => {
             const Icon = item.icon;
@@ -152,7 +175,7 @@ export function Sidebar({ className }: SidebarProps) {
                     ? "bg-slate-800 text-white"
                     : "text-slate-400 hover:text-white hover:bg-slate-800"
                 )}
-                onClick={() => navigate(item.path)}
+                onClick={() => handleNavigation(item.path)}
               >
                 <Icon className="w-5 h-5 shrink-0" />
                 {!collapsed && (
@@ -217,7 +240,7 @@ export function Sidebar({ className }: SidebarProps) {
                   ? "bg-slate-800 text-white"
                   : "text-slate-400 hover:text-white hover:bg-slate-800"
               )}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleNavigation(item.path)}
             >
               <Icon className="w-5 h-5 shrink-0" />
               {!collapsed && (

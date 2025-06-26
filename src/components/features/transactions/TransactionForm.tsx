@@ -147,7 +147,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Transaction Type & Date */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="date">Date *</Label>
           <Popover>
@@ -228,7 +228,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       </div>
 
       {/* Account & Category */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="account">Account *</Label>
           <Select
@@ -309,13 +309,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       </div>
 
       {/* Form Actions */}
-      <div className="flex justify-end space-x-2 pt-4">
+      <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
         )}
-        <Button type="submit" disabled={isLoading}>
+        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
           {isLoading
             ? isEditing
               ? "Updating..."
