@@ -1,1 +1,1 @@
-export { GoalsList } from "./GoalsList";
+export { GoalsListScreen as GoalsList } from "./GoalsListScreen";

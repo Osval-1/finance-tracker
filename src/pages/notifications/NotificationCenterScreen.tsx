@@ -207,22 +207,20 @@ export default function NotificationCenterScreen() {
   return (
     <Layout title="Notifications">
       {/* Background with gradient */}
-      <div className="min-h-full bg-gradient-to-br from-purple-50 via-white to-indigo-50 relative overflow-hidden">
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
         {/* Decorative background elements */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-200/20 to-indigo-300/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-br from-blue-200/20 to-cyan-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-indigo-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-indigo-200/15 to-blue-200/15 rounded-full blur-2xl"></div>
 
         <div className="relative z-10 p-6 max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center relative">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center relative">
                 <Bell className="h-6 w-6 text-white" />
                 {unreadCount > 0 && (
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-white">
-                      {unreadCount}
-                    </span>
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
                   </div>
                 )}
               </div>
@@ -315,14 +313,14 @@ export default function NotificationCenterScreen() {
               <TabsList className="grid w-full grid-cols-2 bg-transparent gap-2">
                 <TabsTrigger
                   value="unread"
-                  className="data-[state=active]:bg-purple-500 data-[state=active]:text-white rounded-xl transition-all duration-200"
+                  className="data-[state=active]:bg-blue-500 data-[state=active]:text-white rounded-xl transition-all duration-200"
                 >
                   <Bell className="h-4 w-4 mr-2" />
                   Unread ({unreadCount})
                 </TabsTrigger>
                 <TabsTrigger
                   value="all"
-                  className="data-[state=active]:bg-purple-500 data-[state=active]:text-white rounded-xl transition-all duration-200"
+                  className="data-[state=active]:bg-blue-500 data-[state=active]:text-white rounded-xl transition-all duration-200"
                 >
                   All Notifications ({notifications.length})
                 </TabsTrigger>
@@ -350,9 +348,7 @@ export default function NotificationCenterScreen() {
                       key={notification.id}
                       className={`border-0 shadow-sm bg-white/70 backdrop-blur-sm border-l-4 ${getNotificationBorderColor(
                         notification.priority
-                      )} ${
-                        !notification.isRead ? "ring-2 ring-purple-100" : ""
-                      }`}
+                      )} ${!notification.isRead ? "ring-2 ring-blue-100" : ""}`}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-start gap-4">
@@ -373,7 +369,7 @@ export default function NotificationCenterScreen() {
                                     {notification.title}
                                   </h3>
                                   {!notification.isRead && (
-                                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                   )}
                                   <Badge
                                     variant={
@@ -511,9 +507,7 @@ export default function NotificationCenterScreen() {
                       key={notification.id}
                       className={`border-0 shadow-sm bg-white/70 backdrop-blur-sm border-l-4 ${getNotificationBorderColor(
                         notification.priority
-                      )} ${
-                        !notification.isRead ? "ring-2 ring-purple-100" : ""
-                      }`}
+                      )} ${!notification.isRead ? "ring-2 ring-blue-100" : ""}`}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-start gap-4">
@@ -534,7 +528,7 @@ export default function NotificationCenterScreen() {
                                     {notification.title}
                                   </h3>
                                   {!notification.isRead && (
-                                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                   )}
                                   <Badge
                                     variant={

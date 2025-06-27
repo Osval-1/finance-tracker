@@ -14,8 +14,9 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  PlusCircle,
   X,
+  TrendingUp,
+  Plus,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
@@ -57,7 +58,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     },
     {
       title: "Goals",
-      icon: Target,
+      icon: TrendingUp,
       path: ROUTES.GOALS.LIST,
       badge: null,
     },
@@ -93,14 +94,20 @@ export function Sidebar({ className, onClose }: SidebarProps) {
   const quickActions = [
     {
       title: "Add Transaction",
-      icon: PlusCircle,
-      action: () => console.log("Add transaction"),
+      icon: Plus,
+      action: () => {
+        navigate(ROUTES.TRANSACTIONS.LIST + "?action=add");
+        if (onClose) onClose();
+      },
       color: "bg-blue-500 hover:bg-blue-600",
     },
     {
       title: "Link Account",
       icon: CreditCard,
-      action: () => console.log("Link account"),
+      action: () => {
+        navigate(ROUTES.ACCOUNTS.LIST + "?action=link");
+        if (onClose) onClose();
+      },
       color: "bg-green-500 hover:bg-green-600",
     },
   ];

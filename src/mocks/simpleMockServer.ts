@@ -7,6 +7,14 @@ import type {
   BudgetSummary,
   BudgetTrend,
 } from "@/types/budgets";
+import type {
+  Goal,
+  GoalsResponse,
+  GoalResponse,
+  CreateGoalPayload,
+  GoalFilters,
+  GoalContribution,
+} from "@/types/goals";
 import {
   dummyBudgets,
   dummyBudgetSummary,
@@ -14,13 +22,25 @@ import {
   dummyAnalytics,
   dummyCategories,
 } from "./budgetData";
+import { dummyGoals, dummyGoalContributions } from "./data/goalsData";
 
 // Mock database state
 let budgetDatabase: Budget[] = [...dummyBudgets];
 let nextBudgetId = budgetDatabase.length + 1;
 
+const goalDatabase: Goal[] = [...dummyGoals];
+let contributionDatabase: GoalContribution[] = [...dummyGoalContributions];
+let nextGoalId = goalDatabase.length + 1;
+let nextContributionId = contributionDatabase.length + 1;
+
 // Helper function to generate new budget ID
 const generateBudgetId = (): string => `budget-${nextBudgetId++}`;
+
+// Helper function to generate new goal ID
+const generateGoalId = (): string => `goal-${nextGoalId++}`;
+
+// Helper function to generate new contribution ID
+const generateContributionId = (): string => `contrib-${nextContributionId++}`;
 
 // Helper function to calculate budget fields
 const calculateBudgetFields = (budget: Budget): Budget => {
@@ -354,5 +374,279 @@ export const mockBudgetAPI = {
   }> => {
     await delay(400);
     return dummyAnalytics;
+  },
+};
+
+// Goals Mock API
+export const mockGoalAPI = {
+  /**
+   * Get all goals with optional filters
+   */
+  getGoals: async (filters?: GoalFilters): Promise<GoalsResponse> => {
+    await delay(300);
+
+    let filteredGoals = [...goalDatabase];
+
+    if (filters) {
+      if (filters.isCompleted !== undefined) {
+        filteredGoals = filteredGoals.filter(
+          (g) => g.isCompleted === filters.isCompleted
+        );
+      }
+      if (filters.category) {
+        filteredGoals = filteredGoals.filter(
+          (g) => g.category === filters.category
+        );
+      }
+      if (filters.priority) {
+        filteredGoals = filteredGoals.filter(
+          (g) => g.priority === filters.priority
+        );
+      }
+    }
+
+    const totalTargetAmount = filteredGoals.reduce(
+      (sum, g) => sum + g.targetAmount,
+      0
+    );
+    const totalCurrentAmount = filteredGoals.reduce(
+      (sum, g) => sum + g.currentAmount,
+      0
+    );
+    const completedGoalsCount = filteredGoals.filter(
+      (g) => g.isCompleted
+    ).length;
+
+    return {
+      success: true,
+      goals: filteredGoals,
+      totalTargetAmount,
+      totalCurrentAmount,
+      completedGoalsCount,
+    };
+  },
+
+  /**
+   * Get a specific goal by ID
+   */
+  getGoalById: async (goalId: string): Promise<GoalResponse> => {
+    await delay(200);
+
+    const goal = goalDatabase.find((g) => g.id === goalId);
+
+    if (!goal) {
+      throw new Error("Goal not found");
+    }
+
+    const contributions = contributionDatabase.filter(
+      (c) => c.goalId === goalId
+    );
+
+    return {
+      success: true,
+      goal,
+      contributions,
+    };
+  },
+
+  /**
+   * Create a new goal
+   */
+  createGoal: async (payload: CreateGoalPayload): Promise<GoalResponse> => {
+    await delay(400);
+
+    const now = new Date().toISOString();
+
+    const newGoal: Goal = {
+      id: generateGoalId(),
+      userId: "user-1",
+      name: payload.name,
+      description: payload.description,
+      targetAmount: payload.targetAmount,
+      currentAmount: 0,
+      targetDate: payload.targetDate,
+      associatedAccountId: payload.associatedAccountId,
+      recurringContributionAmount: payload.recurringContributionAmount,
+      recurringFrequency: payload.recurringFrequency,
+      nextContributionDate: payload.recurringContributionAmount
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        : undefined,
+      isCompleted: false,
+      priority: payload.priority || "medium",
+      category: payload.category,
+      notes: payload.notes,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    goalDatabase.push(newGoal);
+
+    return {
+      success: true,
+      goal: newGoal,
+      message: "Goal created successfully",
+    };
+  },
+
+  /**
+   * Update an existing goal
+   */
+  updateGoal: async (
+    goalId: string,
+    payload: Partial<CreateGoalPayload>
+  ): Promise<GoalResponse> => {
+    await delay(350);
+
+    const goalIndex = goalDatabase.findIndex((g) => g.id === goalId);
+
+    if (goalIndex === -1) {
+      throw new Error("Goal not found");
+    }
+
+    const existingGoal = goalDatabase[goalIndex];
+    const updatedGoal: Goal = {
+      ...existingGoal,
+      ...payload,
+      updatedAt: new Date().toISOString(),
+    };
+
+    goalDatabase[goalIndex] = updatedGoal;
+
+    return {
+      success: true,
+      goal: updatedGoal,
+      message: "Goal updated successfully",
+    };
+  },
+
+  /**
+   * Delete a goal
+   */
+  deleteGoal: async (goalId: string): Promise<{ message: string }> => {
+    await delay(250);
+
+    const goalIndex = goalDatabase.findIndex((g) => g.id === goalId);
+
+    if (goalIndex === -1) {
+      throw new Error("Goal not found");
+    }
+
+    goalDatabase.splice(goalIndex, 1);
+
+    // Also remove related contributions
+    contributionDatabase = contributionDatabase.filter(
+      (c) => c.goalId !== goalId
+    );
+
+    return { message: "Goal deleted successfully" };
+  },
+
+  /**
+   * Mark a goal as completed
+   */
+  completeGoal: async (goalId: string): Promise<GoalResponse> => {
+    await delay(300);
+
+    const goalIndex = goalDatabase.findIndex((g) => g.id === goalId);
+
+    if (goalIndex === -1) {
+      throw new Error("Goal not found");
+    }
+
+    const goal = goalDatabase[goalIndex];
+
+    goalDatabase[goalIndex] = {
+      ...goal,
+      isCompleted: true,
+      completedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    return {
+      success: true,
+      goal: goalDatabase[goalIndex],
+      message: "Goal completed successfully",
+    };
+  },
+
+  /**
+   * Add a contribution to a goal
+   */
+  addGoalContribution: async (
+    goalId: string,
+    amount: number,
+    notes?: string
+  ): Promise<{ message: string; contribution: GoalContribution }> => {
+    await delay(300);
+
+    const goalIndex = goalDatabase.findIndex((g) => g.id === goalId);
+
+    if (goalIndex === -1) {
+      throw new Error("Goal not found");
+    }
+
+    const contribution: GoalContribution = {
+      id: generateContributionId(),
+      goalId,
+      amount,
+      date: new Date().toISOString().split("T")[0],
+      notes,
+      createdAt: new Date().toISOString(),
+    };
+
+    contributionDatabase.push(contribution);
+
+    // Update goal's current amount
+    goalDatabase[goalIndex] = {
+      ...goalDatabase[goalIndex],
+      currentAmount: goalDatabase[goalIndex].currentAmount + amount,
+      updatedAt: new Date().toISOString(),
+    };
+
+    return {
+      message: "Contribution added successfully",
+      contribution,
+    };
+  },
+
+  /**
+   * Get contributions for a specific goal
+   */
+  getGoalContributions: async (
+    goalId: string
+  ): Promise<{ contributions: GoalContribution[] }> => {
+    await delay(200);
+
+    const contributions = contributionDatabase.filter(
+      (c) => c.goalId === goalId
+    );
+
+    return { contributions };
+  },
+
+  /**
+   * Export goals data
+   */
+  exportGoals: async (
+    format: "csv" | "pdf",
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _filters?: GoalFilters
+  ): Promise<Blob> => {
+    await delay(600);
+
+    const data =
+      format === "csv"
+        ? "id,name,targetAmount,currentAmount,targetDate,isCompleted\n" +
+          goalDatabase
+            .map(
+              (g) =>
+                `${g.id},${g.name},${g.targetAmount},${g.currentAmount},${g.targetDate},${g.isCompleted}`
+            )
+            .join("\n")
+        : JSON.stringify(goalDatabase, null, 2);
+
+    return new Blob([data], {
+      type: format === "csv" ? "text/csv" : "application/json",
+    });
   },
 };
