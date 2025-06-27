@@ -151,12 +151,14 @@ export function GoalsListScreen() {
 
   return (
     <Layout title="Goals">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Background with colorful gradient */}
+      <div className="min-h-full bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 relative overflow-hidden">
         {/* Decorative background elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-purple-300/30 to-pink-400/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 right-0 w-64 h-64 bg-gradient-to-br from-blue-300/30 to-cyan-400/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-gradient-to-br from-emerald-300/30 to-teal-400/30 rounded-full blur-3xl"></div>
 
-        <div className="container mx-auto px-4 py-8 relative z-10">
+        <div className="relative z-10 container mx-auto px-4 py-8 space-y-6">
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
@@ -181,59 +183,91 @@ export function GoalsListScreen() {
 
           {/* Summary Cards */}
           {goalsData && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card className="bg-white/70 backdrop-blur-sm border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600">Total Goals</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {goalsData.goals.length}
-                      </p>
-                    </div>
-                    <Target className="h-8 w-8 text-blue-600" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              {/* Primary Blue - Total Goals */}
+              <Card className="border-0 bg-gradient-to-br from-blue-500 to-indigo-600 text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium text-blue-50">
+                    Total Goals
+                  </CardTitle>
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <Target className="h-5 w-5 text-white" />
+                  </div>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    {goalsData.goals.length}
+                  </div>
+                  <div className="flex items-center text-xs text-blue-100">
+                    <TrendingUp className="mr-1 h-3 w-3" />
+                    Active goals
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/70 backdrop-blur-sm border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600">Completed</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        {goalsData.completedGoalsCount}
-                      </p>
-                    </div>
-                    <CheckCircle className="h-8 w-8 text-green-600" />
+              {/* Secondary Green - Completed Goals */}
+              <Card className="border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium text-emerald-50">
+                    Completed
+                  </CardTitle>
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    {goalsData.completedGoalsCount}
+                  </div>
+                  <div className="flex items-center text-xs text-emerald-100">
+                    <CheckCircle className="mr-1 h-3 w-3" />
+                    Goals achieved
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/70 backdrop-blur-sm border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600">Total Target</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        ${goalsData.totalTargetAmount.toLocaleString()}
-                      </p>
-                    </div>
-                    <DollarSign className="h-8 w-8 text-blue-600" />
+              {/* Accent Purple - Total Target */}
+              <Card className="border-0 bg-gradient-to-br from-violet-500 to-purple-600 text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium text-violet-50">
+                    Total Target
+                  </CardTitle>
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <DollarSign className="h-5 w-5 text-white" />
+                  </div>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    ${goalsData.totalTargetAmount.toLocaleString()}
+                  </div>
+                  <div className="flex items-center text-xs text-violet-100">
+                    <DollarSign className="mr-1 h-3 w-3" />
+                    Target amount
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/70 backdrop-blur-sm border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600">Total Saved</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        ${goalsData.totalCurrentAmount.toLocaleString()}
-                      </p>
-                    </div>
-                    <TrendingUp className="h-8 w-8 text-green-600" />
+              {/* Amber/Orange - Total Saved */}
+              <Card className="border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium text-amber-50">
+                    Total Saved
+                  </CardTitle>
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                    <TrendingUp className="h-5 w-5 text-white" />
+                  </div>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    ${goalsData.totalCurrentAmount.toLocaleString()}
+                  </div>
+                  <div className="flex items-center text-xs text-amber-100">
+                    <TrendingUp className="mr-1 h-3 w-3" />
+                    Amount saved
                   </div>
                 </CardContent>
               </Card>
@@ -241,7 +275,7 @@ export function GoalsListScreen() {
           )}
 
           {/* Filters */}
-          <Card className="bg-white/70 backdrop-blur-sm border-white/20 mb-6">
+          <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
             <CardContent className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
@@ -335,7 +369,7 @@ export function GoalsListScreen() {
               {[...Array(6)].map((_, i) => (
                 <Card
                   key={i}
-                  className="bg-white/70 backdrop-blur-sm border-white/20"
+                  className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg"
                 >
                   <CardContent className="p-6">
                     <Skeleton className="h-4 w-3/4 mb-2" />
@@ -347,7 +381,7 @@ export function GoalsListScreen() {
               ))}
             </div>
           ) : goalsData?.goals.length === 0 ? (
-            <Card className="bg-white/70 backdrop-blur-sm border-white/20">
+            <Card className="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
               <CardContent className="p-12 text-center">
                 <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -381,7 +415,7 @@ export function GoalsListScreen() {
                   <Card
                     key={goal.id}
                     className={cn(
-                      "bg-white/70 backdrop-blur-sm border-white/20 hover:shadow-lg transition-all duration-200",
+                      "border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300",
                       goal.isCompleted && "ring-2 ring-green-200"
                     )}
                   >
