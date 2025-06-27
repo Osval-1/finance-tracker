@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router";
 import { Layout } from "@/components/shared";
 import { Button } from "@/components/ui/button";

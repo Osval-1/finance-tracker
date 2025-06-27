@@ -1,10 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Layout } from "@/components/shared";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -155,7 +152,7 @@ export default function NotificationCenterScreen() {
     }
   };
 
-  const getNotificationBorderColor = (type: string, priority: string) => {
+  const getNotificationBorderColor = (priority: string) => {
     if (priority === "high") return "border-l-red-500";
     if (priority === "medium") return "border-l-yellow-500";
     return "border-l-blue-500";
@@ -352,7 +349,6 @@ export default function NotificationCenterScreen() {
                     <Card
                       key={notification.id}
                       className={`border-0 shadow-sm bg-white/70 backdrop-blur-sm border-l-4 ${getNotificationBorderColor(
-                        notification.type,
                         notification.priority
                       )} ${
                         !notification.isRead ? "ring-2 ring-purple-100" : ""
@@ -514,7 +510,6 @@ export default function NotificationCenterScreen() {
                     <Card
                       key={notification.id}
                       className={`border-0 shadow-sm bg-white/70 backdrop-blur-sm border-l-4 ${getNotificationBorderColor(
-                        notification.type,
                         notification.priority
                       )} ${
                         !notification.isRead ? "ring-2 ring-purple-100" : ""

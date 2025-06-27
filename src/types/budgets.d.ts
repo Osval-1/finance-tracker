@@ -35,6 +35,7 @@ export interface BudgetsResponse {
   budgets: Budget[];
   totalBudgeted: number;
   totalSpent: number;
+  summary?: BudgetSummary;
 }
 
 export interface BudgetResponse {

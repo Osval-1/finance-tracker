@@ -22,11 +22,7 @@ import {
   useCreateBudget,
   useUpdateBudget,
 } from "@/hooks/budgets/useBudgetMutations";
-import { createBudgetSchema, updateBudgetSchema } from "@/schema/budget";
-import type {
-  CreateBudgetFormData,
-  UpdateBudgetFormData,
-} from "@/schema/budget";
+import { createBudgetSchema } from "@/schema/budget";
 import type { Budget } from "@/types/budgets";
 import { calculateBudgetPeriodDates } from "@/utils/budgetCalculations";
 
@@ -64,12 +60,12 @@ export function BudgetFormModal({
     setValue,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreateBudgetFormData | UpdateBudgetFormData>({
-    resolver: yupResolver(isEditing ? updateBudgetSchema : createBudgetSchema),
+  } = useForm({
+    resolver: yupResolver(createBudgetSchema),
     defaultValues: budget
       ? {
           categoryId: budget.categoryId,
-          name: budget.name,
+          name: budget.name || "",
           amount: budget.amount,
           period: budget.period,
           periodStartDate: budget.periodStartDate,
@@ -80,7 +76,7 @@ export function BudgetFormModal({
           categoryId: categoryId || "",
           name: "",
           amount: 0,
-          period: "monthly",
+          period: "monthly" as const,
           rolloverEnabled: false,
         },
   });
@@ -89,26 +85,44 @@ export function BudgetFormModal({
 
   // Calculate end date automatically for non-custom periods
   const handlePeriodChange = (period: string) => {
-    setValue("period", period as Budget["period"]);
+    const typedPeriod = period as Budget["period"];
+    setValue("period", typedPeriod);
 
     if (period !== "custom") {
-      const dates = calculateBudgetPeriodDates(period as Budget["period"]);
+      const dates = calculateBudgetPeriodDates(typedPeriod);
       setValue("periodStartDate", dates.startDate);
       setValue("periodEndDate", dates.endDate);
     }
   };
 
-  const onSubmit = async (
-    data: CreateBudgetFormData | UpdateBudgetFormData
-  ) => {
+  const onSubmit = async (data: Record<string, unknown>) => {
     try {
       if (isEditing && budget) {
+        // Transform the data to match the update payload structure
+        const updatePayload = {
+          categoryId: data.categoryId as string,
+          name: data.name as string,
+          amount: data.amount as number,
+          period: data.period as Budget["period"],
+          periodStartDate: data.periodStartDate as string,
+          periodEndDate: data.periodEndDate as string,
+          rolloverEnabled: data.rolloverEnabled as boolean,
+        };
+
         await updateBudgetMutation.mutateAsync({
           budgetId: budget.id,
-          payload: data,
+          payload: updatePayload,
         });
       } else {
-        await createBudgetMutation.mutateAsync(data as CreateBudgetFormData);
+        await createBudgetMutation.mutateAsync({
+          categoryId: data.categoryId as string,
+          name: data.name as string,
+          amount: data.amount as number,
+          period: data.period as Budget["period"],
+          periodStartDate: data.periodStartDate as string,
+          periodEndDate: data.periodEndDate as string,
+          rolloverEnabled: data.rolloverEnabled as boolean,
+        });
       }
       handleClose();
     } catch {

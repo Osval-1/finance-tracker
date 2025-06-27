@@ -27,7 +27,6 @@ import {
   useArchiveBudget,
 } from "@/hooks/budgets/useBudgetMutations";
 import { useBudgetStore } from "@/store/budgetStore";
-import { formatCurrency } from "@/utils/formatters";
 import {
   addBudgetStatus,
   sortBudgetsByPriority,
@@ -89,11 +88,6 @@ export function BudgetsDashboard() {
   };
 
   const healthScore = getHealthScore();
-  const getHealthColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-amber-600";
-    return "text-red-600";
-  };
 
   return (
     <Layout title="Budget Dashboard">
@@ -136,7 +130,7 @@ export function BudgetsDashboard() {
 
         {/* Quick Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
+          <Card onClick={() => setSelectedPeriod("monthly")}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Budgets
